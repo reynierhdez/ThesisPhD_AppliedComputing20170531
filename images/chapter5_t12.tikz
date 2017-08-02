@@ -1,0 +1,57 @@
+\begin{tikzpicture}[node distance=1mm]
+
+\clip(0,0.5) rectangle (10,5.1);
+\coordinate (a) at (8,4) node[above=of a] {\scriptsize $1$};
+\coordinate (b) at (8,2) node[below=of b] {\scriptsize $2$};
+\coordinate (c) at (6,4) node[above=of c] {};
+\coordinate (d) at (6,2) node[below=of d] {};
+\coordinate (e) at (4,4) node[above=of e] {};
+\coordinate (f) at (4,2) node[below=of f] {};
+\coordinate (g) at (2,4) node[above=of g] {};
+\coordinate (h) at (2,2) node[below=of h] {};
+
+\node[hinge b,draw] (A) at (a){};
+\node[hinge b,draw] (C) at (c){};
+\node[hinge b,draw] (B) at (b){};
+\node[hinge b,draw] (D) at (d){};
+\node[hinge b,draw] (E) at (e){};
+\node[hinge b,draw] (F) at (f){};
+\node[hinge,draw,grounded=270,scale=1,transform shape] (G) at (g){};
+\node[hinge,draw,grounded=270,scale=1,transform shape] (H) at (h){};
+
+\draw[thick] (G) -- node[sloped, above, font= \footnotesize] {1} (E);
+
+\draw[ultra thin, red] (E) -- node[sloped, above, font= \footnotesize, align=center] {2 {\scriptsize (15\%)}} (C);
+\draw[thick, densely dashed] (E) -- node[sloped, above, font= \footnotesize, align=center] {} (C);
+
+\draw[thick] (C) -- node[sloped, above, font= \footnotesize] {3} (A);
+
+\draw[ultra thin, red] (A) -- node[sloped, above, font= \footnotesize, align=center] {4 {\scriptsize (5\%)}} (B);
+\draw[thick, densely dashed] (A) -- node[sloped, above, font= \footnotesize, align=center] {} (B);
+
+\draw[thick] (B) -- node[sloped, above, font= \footnotesize] {5} (D);
+\draw[thick] (D) -- node[sloped, above, font= \footnotesize] {6} (F);
+
+\draw[ultra thin, red] (F) -- node[sloped, above, font= \footnotesize, align=center] {7 {\scriptsize (30\%)}} (H);
+\draw[thick, densely dashed] (F) -- node[sloped, above, font= \footnotesize, align=center] {} (H);
+
+\draw[thick] (H) -- node[sloped, above, font= \footnotesize] {8} (E);
+\draw[thick] (E) -- node[sloped, above, font= \footnotesize] {9\;\;\;\;\;\;} (F);
+
+\draw[ultra thin, red] (F) -- node[sloped, above, font= \footnotesize, align=center] {10 {\scriptsize (10\%)}} (C);
+\draw[thick, densely dashed] (F) -- node[sloped, above, font= \footnotesize, align=center] {} (C);
+
+\draw[thick] (C) -- node[sloped, above, font= \footnotesize] {11\;\;\;\;\;\;} (D);
+
+\draw[ultra thin, red] (D) -- node[sloped, above, font= \footnotesize, align=center] {12 {\scriptsize (20\%)}} (A);
+\draw[thick, densely dashed] (D) -- node[sloped, above, font= \footnotesize, align=center] {} (A);
+
+\draw [-latex, thick , gray] (A) -- +(0.5cm,-0.5cm)
+	node [right] {\footnotesize $F_{_A}$};
+\draw [-latex, thick , gray] (B) -- +(0.5cm,-0.5cm)
+	node [right] {\footnotesize $F_{_B}$};
+	
+\draw[latex-latex] (2,0.9) node[below] {\footnotesize $y$} -- (2,1.4) -- (2.5,1.4) node[right] {\footnotesize  $x$};
+
+\draw[-latex] ([shift=(345:0.5)]2,1.4) node[sloped, left=0.15] {} arc (345:285:0.5);
+\end{tikzpicture}

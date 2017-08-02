@@ -1,0 +1,18 @@
+\begin{tikzpicture}
+
+\node[draw] (pre) at (0,0) {Pre-processing};
+\node[draw, below of=pre, node distance=2cm, align = center, xshift = -1cm] (cad) {CAD \\ CAM};
+\node[draw, below of=pre, node distance=2cm, align = center, xshift = 1cm] (eng) {Engineering \\ data};
+\node[draw, right of=pre, node distance=5cm, align = center] (fea) {Finite element \\ solution};
+\node[draw, above of=fea, node distance=2cm, align = center] (upd) {Model updating};
+\node[draw, right of=fea, node distance=5cm] (pos) {Pos-processing};
+\node[draw, below of=pos, node distance=2cm, align = center] (vis) {Results \\ visualization};
+
+\draw[-latex] (pre) -- (fea) node [midway, above, align = center] {Finite \\ element \\ model};
+\draw[-latex] (fea) -- (pos) node [midway, above] {Results};
+\draw[-latex] (pos) -- (vis);
+\draw[-latex] (cad) -- (pre);
+\draw[-latex] (eng) -- (pre);
+\draw[-latex,dotted] (upd) -| (pre);
+\draw[-latex,dotted] (pos) |- (upd);
+\end{tikzpicture}

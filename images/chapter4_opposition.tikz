@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+\draw[-,semithick] (-0.3,0) -- (0,0);
+\draw[|-,semithick] (0,0) -- (0.7,0);
+\draw[|-,semithick] (0.7,0) -- (3,0);
+\draw[|-,semithick] (3,0) -- (5.3,0);
+\draw[|-,semithick] (5.3,0) -- (6,0);
+\draw[|-latex,semithick] (6,0) -- (6.3,0);
+
+\draw (0,-0.5) node {$s^l$};
+\draw (0.7,-0.5) node {$s_o$};
+\draw (3,-0.5) node {$c$};
+\draw (5.3,-0.5) node {$s$};
+\draw (6,-0.5) node {$s^u$};
+
+\coordinate (O) at (0.7,0.2);
+\coordinate (a) at (0.7,0.8);
+\coordinate (c) at (3.0,0.2);
+\coordinate (b) at (5.3,0.2);
+\coordinate (d) at (5.3,0.8);
+
+\draw[decorate,decoration={brace,amplitude=5pt,raise=0.5pt},yshift=0pt,color=black] (O) -- (c) node [midway,yshift=11pt]{$s_{qo}$};
+
+\draw[decorate,decoration={brace,amplitude=5pt,raise=0.5pt},yshift=0pt,color=black] (a) -- (d) node [midway,yshift=11pt]{$s_{cb}$};
+
+\draw[decorate,decoration={brace,amplitude=5pt,raise=0.5pt},yshift=0pt,color=black] (c) -- (b) node [midway,yshift=11pt]{$s_{qr}$};
+
+\end{tikzpicture}

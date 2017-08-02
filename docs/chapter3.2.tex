@@ -1,0 +1,256 @@
+\chapter{Using NASTRAN for Transient Response Analysis}
+\label{chp:5}
+\epigraph{Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.}{Albert Einstein}
+
+In the last chapter, the FEM method was briefly presented. Also, were shown some 0D and 1D elements that are used for modeling structures. The way for calculating their stiffness was summarized.
+
+This chapter presents the software NASTRAN, which is used for performing CAE. This NASTRAN used the FEM to do the structural analysis.
+
+First, a brief presentation of the NASTRAN will be done. Then, the main input and output NASTRAN files will be described. The main entries for defining structures will be indicated. Finally, will be explained the way to perform the transient response analysis.
+
+\lstset{language=NASTRAN}
+\lstset{keywords={GRID,MAT1,CONM2,TSTEP,TLOAD1,TLOAD2,TABLED1,DAREA,SPC,TIC,TABDMP1}, keywordstyle={\color{blue!80!black}}}
+\lstset{basicstyle=\scriptsize\ttfamily,breaklines=true}
+
+\section{NASTRAN}
+
+NASTRAN (NASA Structural Analysis System) is a potent general purpose finite element analysis program for use in computer-aided engineering \cite{Nastran2001, Nastran2014}.
+
+Originally, NASTRAN was developed by National Aeronautics and Space Administration (NASA) in the mid-1960. The MacNeal-Schendler Corporation (MSC) was one of the principal developers of the public domain code.
+
+NASTRAN is used by engineers to perform static, dynamic, and thermal analysis in linear and nonlinear systems, complemented with automated structural optimization and award winning embedded fatigue analysis technologies, all enabled by high-performance computing. It is used to ensure that structural systems have the necessary strength, stiffness, and lifetime to preclude failure that may compromise structural function and safety.
+
+Over the years, NASA has actively maintained and improved NASTRAN such that it remains a state-of-the-art structural analysis system. NASTRAN source code is integrated into some different software packages, which are distributed by a range of companies. The software is written primarily in FORTRAN and contains over one million lines of code. Also, NASTRAN is compatible with a large variety of computers and operating systems ranging from small workstations to the largest supercomputers.
+
+\section{NASTRAN files}
+
+The most important interface files in NASTRAN are the input and output files. Default extensions for the input file are: \texttt{dat}, \texttt{nas}, or \texttt{bdf}. When the structural analysis is performed, additional files are created. Most common output files extensions are: \cite{Nastran2001, Nastran2014}
+
+\begin{description}
+    \item[\texttt{dball}] Contains permanent data for database runs for restart analyses
+    \item[\texttt{master}] Contains permanent data for database runs for restart analyses
+    \item[\texttt{f04}] Contains the start and stop time for each module executed as well as the size of the database file
+    \item[\texttt{f06}] Contains the results of the analysis, such as the displacements, stresses, etc., as well as any diagnostic messages
+    \item[\texttt{log}] Contains system information, such as the name of the computer in which the program is running on, and any system error encountered
+\end{description}
+
+\subsection{Input file}
+
+The NASTRAN input file contains a complete description of the finite element model, including the type of analysis to be performed, the model geometry, the definition of the type and material of the finite elements, and the boundary conditions.
+
+The input file is comprised of five distinct sections (NASTRAN Statement (optional), File Management Section (optional), Executive Control Section, Case Control Section and Bulk Data Section), and three required one-line delimiter (\texttt{CEND}, \texttt{BEGIN BULK} and \texttt{ENDDATA}), as shown in \autoref{fig:input}. The three obligatory sections are briefly described below:
+
+\begin{figure}[H]
+    \caption{Structure of the NASTRAN Input file. The required sections are represented in bold.}
+    \label{fig:input}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_nastraninput.tikz}
+\end{figure}
+
+\begin{description}[style=sameline]
+\item[Executive Control Section] This section provides the overall control for the solution. In this section, the following options can be specified: an optional \texttt{ID} statement to identify a job, the type of analysis to be performed, an optional \texttt{TIME} statement to set limits on the maximum allowable CPU time for the run, and various diagnostics requested. The \texttt{CEND} delimiter ends this section.
+\item[Case Control Section] This section follows the Executive Control section and precedes the Bulk Data section, separated by the \texttt{BEGIN BULK} delimiter. It contains commands that allow to:
+\vspace{1em}
+\begin{itemize}[leftmargin=\parindent]
+    \item[--] define/select analysis sub-cases (multiple loadings in a single job execution);
+    \item[--] define \texttt{SETS} to specify and control the type of analysis output produced (e.g., forces, stresses, and displacements);
+    \item[--] select output requests for printing, punching and plotting;
+    \item[--] define titles, subtitles and labels for documenting the analysis.
+\end{itemize}
+
+\item[Bulk Data Section] This section starts just after the \texttt{BEGIN BULK} delimiter. The Bulk Data Section section constitutes the majority of the content of the input file and contains all the information necessary to define the finite element model, such as geometry, coordinate systems, finite elements, element properties, loads, boundary conditions, material properties and so on.
+\end{description}
+
+\subsection{Output files}
+
+The most common output file is the \texttt{f06} file. NASTRAN writes this file to the unit 6 of FORTRAN. The \texttt{f06} file contains all the requested results from the analysis, such as displacements, stresses and element forces, as well as any diagnostic messages. This file can be used in the process of model checkout and debugging. Also, NASTRAN can create a punch file (\texttt{pch}) that contains the analysis results in a fixed-length text table format.
+
+The output from data recovery and plot modules is optional and controlled by commands in the Case Control section.
+
+\section{Using NASTRAN for defining structures}
+
+NASTRAN bulk data entries may have different formats: a fixed field format with ten fields per line and eight characters per field, or a free field format, with periods separating the fields.
+
+\begin{table}[H]
+    \caption{Some commonly used elastic element in NASTRAN}
+    \label{tab:elements}
+    \centering
+    \footnotesize
+    \begin{tabular}{ccc}
+        \hline
+        Dimensionality & Entry & Use\\
+        \hline
+        \multirow{3}{*}{0D} & \texttt{CELAS} & Simple spring connecting 2-DOF \\
+        & \texttt{CBUSH} & \makecell{Frequency-dependent spring/damper\\connecting up to 6-DOF} \\
+        \hline
+        \multirow{4}{*}{1D} & \texttt{ROD} & Pin-ended rod  \\
+        & \texttt{BAR} & Prismatic beam \\
+        & \texttt{BEAM} & Straight beam with warping \\
+        & \texttt{BEND} & Curved beam, pipe or elbow \\
+        \hline
+        \multirow{3}{*}{2D} & \texttt{TRIA3} / \texttt{TRIAR} & Triangular plate \\
+        & \texttt{QUAD4} / \texttt{QUADR} & Quadrilateral plate \\
+        & \texttt{SHEAR} & Four sided shear panel \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\subsection{Setting the structures geometry}
+
+The \texttt{GRID} bulk data entry is used to define a grid point. 
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+GRID    ID      CP      X1      X2      X3      CD      PS      SEID
+\end{lstlisting}
+
+in which \texttt{ID} is the grid point identification number; \texttt{CP} is the identification number of coordinate system in which the location of the grid point is defined; \texttt{Xi} specify the location of the grid point in coordinate system, \texttt{CD} is the identification number of coordinate system in which the displacements, degrees of freedom, constraints, and solution vectors are defined at the grid point; \texttt{PS} is the permanent single-point constraints associated with the grid point, and \texttt{SEID} is the super-element identification number.
+
+The \texttt{GRDSET} entry is useful, for example, in the case of such problems as trusses where is needed to remove all the rotational DOF.
+
+\subsection{Defining material properties}
+
+There are different ways of doing the mass input: using the \texttt{MATi} entries, which define the material density, using the scalar mass entries \texttt{CMASSi} and \texttt{PMASS}, or by using the grid point mass definition \texttt{CONM1} and \texttt{CONM2}.
+
+For example, \texttt{MAT1} entry defines a homogeneous\footnote{Homogeneous: The material is the same nature, regardless of location within the material.}, isotropic\footnote{Isotropic: The material properties do not change with the direction of the material.} material using the following format:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+MAT1    MID     E       G       NU      RHO     A       TREF    GE
+\end{lstlisting}
+
+where \texttt{MID}, \texttt{E} is the Young's modulus, \texttt{G} is the Shear modulus, \texttt{NU} is the Poisson's ratio, \texttt{RHO} is the Mass density, \texttt{A} is the coefficient of thermal expansion, \texttt{TREF} is reference temperature for the calculation of thermal loads, and \texttt{GE} is the structural element damping coefficient.
+
+Other entry used in NASTRAN is the \texttt{CONM2} entry:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+CONM2   EID     G       CID     M       X1      X2      X3 
+        I11     I21     I22     I31     I32     I33
+\end{lstlisting}
+
+where \texttt{EID} is the element identification number, \texttt{G} is the grid point identification number, \texttt{CID} is the coordinate system identification number, \texttt{M} is the mass value, \texttt{X1}, \texttt{X2}, \texttt{X3} are the offset distances from the grid point to the center of gravity of the mass in the basic coordinate system, and \texttt{Iij} is the mass moment of inertia measured at the mass center of gravity in the coordinate system defined by field CID.
+
+\section{Using NASTRAN for transient response analysis}
+
+In NASTRAN, the \texttt{SOL 109} is used to perform direct transient response analysis. The \texttt{SOL 112} performs modal transient response analysis \cite{nastran2004basic}.
+
+\subsection{Integration time step}
+
+The integration time step is defined by the \texttt{TSTEP} entry card. The time step must be small enough to represent both the variation in the loading and the maximum frequency of interest.
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------
+TSTEP   SID     N1      DT1     NO1
+                N2      DT2     NO2
+                -etc-
+\end{lstlisting}
+
+In the card \texttt{TSTEP}, \texttt{SID} represents the number, \texttt{Ni} are the number of time steps, \texttt{DTi} is the integration time step $\Delta t$, and \texttt{NOi} control the output rates, with output at every NOi time step.
+
+\subsection{Time-dependent loads}
+
+For defining force as a function of time, NASTRAN has two methods: \texttt{TLOAD1} and \texttt{TLOAD2}
+
+\texttt{TLOAD1} is a brute force method, that uses ordered time, load pairs in a table input $f(t)$, as follows:
+%
+\begin{equation}
+    F(t) = A \cdot f\left( t - \tau \right) \,.
+\end{equation}
+
+\texttt{TLOAD1} entry is defined as follows:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------
+TLOAD1  SID   EXCITEDID DELAY  TYPE    TID     US0     VS0
+\end{lstlisting}
+
+In the card \texttt{TLOAD1}, \texttt{SID} represents the set identification number, \texttt{EXCITEDID} is the identification number of \texttt{DAREA} or \texttt{SPCD} entry set, \texttt{DELAY} is the time delay $\tau$, \texttt{TYPE} defines the type of the dynamic excitation, \texttt{TID} is the identification number of \texttt{TABLEDi} entry that defines $f(t)$, and \texttt{US0} and \texttt{VS0} is the factor for initial displacements and velocities of the enforced DOF, respectively.
+
+\texttt{TLOAD2} is an analytical-type load with time, defined a dynamic loading of the form:
+
+\begin{equation}
+    P(t) =
+    \begin{cases} 
+    0 & x < (T1 + \tau) \\
+    A\tilde{t}^{-B}e^{C\tilde{t}} \cos(2 \pi F t + P) & (T1 + \tau) \leq t\leq (T2 + \tau) \\
+    0 & x > (T2 + \tau)
+    \end{cases}
+\end{equation}
+%    
+in which $\tilde{t} =  t - T1 - \tau$, $T1$ and $T2$ are time constants ($T2 > T1$), $F$ is the frequency in cycles per unit time, $P$ us the phase angle in degrees, $C$ is the exponential coefficient, and $B$ is the growth coefficient.
+
+\texttt{TLOAD2} entry is formated as follows:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+TLOAD2  SID     EXCITEDIDDELAY  TYPE    T1      T2      F       P
+        C       B       US0     VS0
+\end{lstlisting}
+
+In the card \texttt{TLOAD2}, \texttt{SID}, \texttt{EXCITEDID}, \texttt{DELAY}, \texttt{TYPE}, \texttt{US0} and \texttt{VS0} have the same definition that in \texttt{TLOAD1}.
+
+\subsection{Dynamic Load Tabular Function}
+
+It exists four types of \texttt{TABLEDi} entries, which define a tabular function for generating time-dependent dynamic loads.
+
+The \texttt{TABLED1} entry can perform linear or logarithmic interpolations between points. The format for this entry has the following form:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+TABLED1 TID     XAXIS   YAXIS
+        X1      Y1      X2      Y2      -etc-   ENDT
+\end{lstlisting}
+
+where \texttt{TID} is the identification number of the table; \texttt{XAXIS} and \texttt{YAXIS} specify a linear or logarithmic interpolation for the $x$-axis and the $y$-axis, respectively; and \texttt{xi} and \texttt{yi} are the tabular values, in which the values of $x$ are frequency in cycles per unit time. The term \texttt{ENDT} ends the table input.
+
+\subsection{Spatial distribution of loading}
+
+The \texttt{DAREA} card defines the spacial distribution of a dynamic loading, using the following format:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+DAREA   SID     P1      C1      A1      P2      C2      A2
+\end{lstlisting}
+
+in which \texttt{SID} is the identification number, \texttt{Pi} is the ID of the grid, extra, or scalar point, \texttt{Ci} is the component number, and \texttt{Ai} is the scale factor.
+
+\subsection{Initial conditions}
+
+For imposing the initial conditions of displacement and velocity, the \texttt{TIC} bulk data entry is used, and selected by the \texttt{IC} case control command.
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+TIC     SID     
+\end{lstlisting}
+
+\subsection{Single-point constraints}
+
+A single point constraint applies a fixed value to a translational or rotational component at an individual grid point or to a scalar point. This restriction is used for fixing a structure to the ground, or for removing some DOF that are not utilized in the structural analysis, for example.
+
+The \texttt{SPC} entry format is defined as follows:
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+SPC     SID     G1      C1      D1      G2      C2      D2
+\end{lstlisting}
+
+where \texttt{SID} is the identification number of the single-point constraint set, \texttt{Gi} is the grid or scalar point identification number, \texttt{Ci} is the component number, and \texttt{Di} is the value of enforced displacement for all degrees of freedom that were designated.
+
+\subsection{Damping}
+
+The damping in NASTRAN can be modeled using different entries. For viscous damping, the cards \texttt{CVISC}, \texttt{CDAMPi} and \texttt{CBUSH} are used. The way for defining structural damping varies from element to element, and it is uniform for the entire model.
+
+For establishing damping versus frequency in modal transient response, the \texttt{TABDMP1} entry is used. In the case control, the \texttt{SDAMPING} command will set the damping.
+
+\begin{lstlisting}
+$-------2-------3-------4-------5-------6-------7-------8-------9-------
+TABDMP1 ID      TYPE
+        F1      G1      F2      G2      F3      G3      -etc-   ENDT
+\end{lstlisting}
+
+\section{Chapter conclusions}
+
+In this chapter, was 

@@ -1,0 +1,85 @@
+\begin{tikzpicture}
+
+\pgfplotsset{compat=1.11,
+    /pgfplots/ybar legend/.style={
+    /pgfplots/legend image code/.code={%
+       \draw[##1,/tikz/.cd,yshift=-0.25em]
+        (0cm,0cm) rectangle (3pt,0.8em);},
+   },
+}
+
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.23 \textheight,
+        bar width=3.2pt,
+        enlarge x limits=0.05,
+        xmin = 1,
+        xmax = 12,
+        ymin = -20,
+        ymax = 55,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Real,MPCA-HJ,CBMPCA-HJ,RBSMPCA-HJ,$q$G-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+
+\addplot[draw,
+        fill=white,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - \thisrow{damage}}}] \loaddataEngOpt;
+        
+\addplot[draw,
+        fill=yaleblue,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - \thisrow{mpcahj5}}}] \loaddataEngOpt;
+
+\addplot[draw,
+        fill=oucrimsonred,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - \thisrow{cbhj5}}}] \loaddataEngOpt;
+
+\addplot[draw,
+        fill=armygreen!80!white,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - \thisrow{rbhj5}}}] \loaddataEngOpt;
+
+\addplot[draw,
+        fill=vegasgold,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noisy5qg}/\thisrow{integral}}}] \loaddataqgtruss;
+\end{axis}
+\end{tikzpicture}

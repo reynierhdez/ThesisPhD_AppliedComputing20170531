@@ -1,0 +1,38 @@
+\begin{tikzpicture}
+\begin{scope}[rotate around y=-30,scale=0.45]
+\coordinate (P1) at (0,0,9);
+\coordinate (P2) at (2,0,9);
+\coordinate (P3) at (2,0.4,9);
+\coordinate (P4) at (1.2,0.4,9);
+\coordinate (P5) at (1.2,2.9,9);
+\coordinate (P6) at (2,2.9,9);
+\coordinate (P7) at (2,3.3,9);
+\coordinate (P8) at (0,3.3,9);
+\coordinate (P9) at (0,2.9,9);
+\coordinate (P10) at (0.8,2.9,9);
+\coordinate (P11) at (0.8,0.4,9);
+\coordinate (P12) at (0,0.4,9);
+
+\coordinate (Q1) at (0,0,0);
+\coordinate (Q2) at (2,0,0);
+\coordinate (Q3) at (2,0.4,0);
+\coordinate (Q4) at (1.2,0.4,0);
+\coordinate (Q5) at (1.2,2.9,0);
+\coordinate (Q6) at (2,2.9,0);
+\coordinate (Q7) at (2,3.3,0);
+\coordinate (Q8) at (0,3.3,0);
+\coordinate (Q9) at (0,2.9,0);
+\coordinate (Q10) at (0.8,2.9,0);
+\coordinate (Q11) at (0.8,0.4,0);
+\coordinate (Q12) at (0,0.4,0);
+\draw[gray!70!black,fill=gray!10] (Q1) -- (Q2) -- (Q3) -- (Q4) -- (Q5) -- (Q6) -- (Q7) -- (Q8) -- (Q9) -- (Q10) -- (Q11) -- (Q12) -- cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis]  (P11) -- (Q11) -- (Q12) -- (P12) --cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis]  (P2) -- (Q2) -- (Q3) -- (P3) --cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis] (P3) -- (Q3) -- (Q4) -- (P4) --cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis] (P4) -- (Q4) -- (Q5) -- (P5) --cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis] (P5) -- (Q5) -- (Q6) -- (P6) --cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis] (P6) -- (Q6) -- (Q7) -- (P7) --cycle;
+\fill[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis] (P7) -- (Q7) -- (Q8) -- (P8) --cycle;
+\draw[gray!70!black,fill=gray!10] (P1) -- (P2) -- (P3) -- (P4) -- (P5) -- (P6) -- (P7) -- (P8) -- (P9) -- (P10) -- (P11) -- (P12) -- cycle;
+\end{scope}
+\end{tikzpicture}

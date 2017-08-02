@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+\tikzstyle{ground}=[fill,pattern=south west lines,draw=none,minimum width=0.75cm,minimum height=0.3cm]
+\begin{scope}[node distance=1.25cm]
+\node[draw,outer sep=0pt] (B1) [minimum width=1.25*10cm, minimum height=1cm]{};
+\node[draw,circle,inner sep=0pt,minimum size=1cm] (BA) [right of=B1,xshift=1.25*5cm+0.5cm] {};
+
+\draw [very thin,gray] ($(BA.east)-(0.4,0)$) -- ($(BA.west)+(0.4,0)$);
+\draw [very thin,gray] ($(BA.north)-(0,0.4)$) -- ($(BA.south)+(0,0.4)$);
+
+\draw [-,line width=0.01mm] ($(BA.south)-(0,0.2)$) -- ($(BA.south)-(0,0.55)$);
+\draw [-,line width=0.01mm] ($(BA.east)-(0,0.2)$) -- ($(BA.east)-(0,1.05)$);
+
+\draw [latex-latex] ($(BA.south)-(0,0.55)$) -- ($(BA.east)-(0,1.05)$) node[midway,above] {$r$};
+
+\node (wall2) [ground, rotate=-90, minimum width=1.5cm, yshift=0.84cm-1.2*5cm, below of=B1] {};
+
+\draw (wall2.north east) -- (wall2.north west);
+\draw [latex-, thick , gray] (9*1.25+0.625,0.2) -- +(0,1cm) node [midway, right] {$F$};
+
+\draw [-,line width=0.01mm] ($(B1.south east)-(0,0.1)$) -- ($(B1.south east)-(0,0.8)$);
+
+\draw [-,line width=0.01mm] ($(B1.south west)-(0,0.5)$) -- ($(B1.south west)-(0,0.8)$);
+
+\draw [latex-latex] ($(B1.south east)-(0,0.8)$) -- ($(B1.south west)-(0,0.8)$) node[midway,above] {$l$};
+
+\end{scope}
+\end{tikzpicture}

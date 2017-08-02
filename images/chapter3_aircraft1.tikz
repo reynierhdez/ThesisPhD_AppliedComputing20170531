@@ -1,0 +1,7 @@
+\begin{tikzpicture}[scale=0.010]
+
+\input{images/chapter3_aircraft_whole.tex}
+
+\node[text width=3cm] at (280,210) {\contour{white} {\huge $\Omega$}};
+
+\end{tikzpicture}

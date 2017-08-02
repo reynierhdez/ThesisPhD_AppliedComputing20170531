@@ -1,0 +1,87 @@
+\section{Hooke-Jeeves Pattern Search Method}
+\label{sec:hj}
+
+The direct search method proposed by \citeonline{hooke1961direct} consists of the repeated application of exploratory moves around a base point $s$ defined in a $n$-dimensional space. If these steps are successful, they are followed by pattern moves.
+
+Hooke-Jeeves (HJ) method has been used in some hybrid algorithms, such as HJPCA \cite{RiosCoelho2010843}, HJMA \cite{Moser2009AHB}, PSO/HJ \cite{kampf2010comparison}, GAHJ \cite{long2014hybrid}, AS+HJ \cite{Braun2015}, qG-HJ \cite{HernandezTorres2015}, and MPCA-HJ \cite{HernandezTorres2015b}.
+
+\Autoref{fig:hj,fig:hje}, and \Autoref{alg:hj, alg:hjexploratory} show the flowchart and the pseudo-code of the HJ method, respectively.
+
+\begin{figure}[H]
+\caption{Flowchart of the Hooke-Jeeves direct search method}
+\label{fig:hj}
+\centering
+\vspace{1em}
+\scalebox{.8}{
+\includegraphics{images/chapter4_hjmain.tikz}}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Flowchart of the Exploratory function in the Hooke-Jeeves direct search method}
+\label{fig:hje}
+\centering
+\vspace{1em}
+\scalebox{.8}{
+\includegraphics{images/chapter4_hjexp.tikz}}
+\end{figure}
+
+\begin{algorithm}[H]
+\caption{Hooke-Jeeves pattern search method}
+\label{alg:hj}
+\begin{algorithmic}[1]
+\footnotesize     
+\State Choose $s^c, \rho, h_{\mathrm{min}}$
+\While{$N_{FE} < N_{FE}^{hj}$ \textbf{and} $h > h_{\mathrm{min}}$}  \Comment{Stopping criteria}
+\State $s =$ \Call{Exploratory}{$s^c,h$}
+\If{$J(s) < J(s^c)$}
+\State $s^{\circ} = s + (s - s^c)$
+\If{$J(s^{\circ}) < J(s)$}
+\State $s^c = s^{\circ}$
+\Else
+\State $s^c = s$
+\EndIf
+\Else
+\State $h = h \times \rho$
+\EndIf
+\EndWhile
+\State \Return $s^c$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Exploratory function}
+\label{alg:hjexploratory}
+\begin{algorithmic}[1]
+\footnotesize
+\Function{Exploratory}{$s^c,h$}
+\State $s = s^c$
+\For {$d \gets 1$ to $D$}
+\If{$J(s + h v_{_d}) < J(s)$}
+\State $s = s + h v_{_d}$
+\ElsIf{$J(s - h v_{_d}) < J(s)$}
+\State $s = s - h v_{_d}$
+\EndIf
+\EndFor
+\State \Return $s$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Exploratory move}
+In the exploratory move, the solution is changed adding and subtracting each time, a column $v_{_d}$ of the search direction matrix $V$, scaled by a step size $h$.
+
+When $V$ is the identity matrix, the modification is performed on the $d$-th element of the solution $s$ each time. This process is done for all the dimensions of the problem. The original solution is compared with both solutions created, and the best among them will be returned.
+
+\subsection{Pattern move}
+
+A new pattern point $s^{\circ}$ is calculated as follows:
+%
+\begin{equation}
+    s^{\circ} = s + \left(s - s^c \right).
+\end{equation}
+%
+where $s$ is the solution obtained from the exploratory move, and $s^c$ is the current solution. If the pattern point $s^{\circ}$ is better than $s^c$, $s^c$ will be replaced with $s^{\circ}$. If there is no improvement, the step size $h$ is reduced in $\rho$ times.
+
+\subsection{Stopping criteria}
+
+A minimum step size $h_{min}$ and a maximum number of function evaluations $N_{FE}^{hj}$ are defined as stopping criteria.

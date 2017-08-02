@@ -1,0 +1,286 @@
+\section{Multi-Particle Collision Algorithm}
+\label{sec:mpca}
+
+Multi-Particle Collision Algorithm (MPCA) is a metaheuristic inspired by the physics of nuclear particle collision reactions created by \citeonline{Luz2008} based on the Particle Collision Algorithm (PCA) from \citeonline{sacco2005new}. It is based on the scattering and absorption phenomena that occur inside the nuclear reactor. Scattering is when an incident particle is scattered by a target nucleus, while absorption is when an incident particle is absorbed by the target nucleus, as depicted in \autoref{fig:phenomena}.
+
+\begin{figure}[H]%
+\caption{Phenomena inside a nuclear reactor that inspire MPCA: \subref{fig:scattering} scattering; and \subref{fig:absorption} absorption.}%
+\label{fig:phenomena}%
+\vspace{1em}
+\centering
+\subfigure[][]{%
+\label{fig:scattering}%
+\begin{minipage}{0.45\textwidth}
+\centering
+\scalebox{0.6}{
+\includegraphics{images/chapter4_scattering.tikz}}%
+\end{minipage}}
+\hspace{8pt}%
+\subfigure[][]{%
+\label{fig:absorption}%
+\begin{minipage}{0.45\textwidth}
+\centering
+\scalebox{0.6}{
+\includegraphics{images/chapter4_absorption.tikz}}
+\end{minipage}}%
+\end{figure}
+
+In MPCA, a set of particles (i.e. candidate solutions), travels through the search space. There are three primary functions: perturbation, exploitation, and scattering. New solutions are created perturbing the particles. After the perturbation is applied, if the new position of the particle is better than the previous one, an intensification is made in its neighborhood, looking for improving, even more, the solution found. If the new particle position is worse than the previous one, two possible processes can be done, depending on predefined probability: a new random position is generated, or a local search is performed in the neighborhood of the particle. The flowchart of the MPCA is shown in \autoref{fig:mpca}, and the pseudo-code is presented in \autoref{alg:mpca}.
+
+\begin{figure}[H]
+\caption{Flowchart of the Multi-Particle Collision Algorithm}
+\label{fig:mpca}
+\centering
+\vspace{1em}
+\scalebox{0.8}{
+\includegraphics{images/chapter4_mpca.tikz}
+}
+\end{figure}
+
+\begin{algorithm}[H]
+\caption{Multi-Particle Collision Algorithm}
+\label{alg:mpca}
+\footnotesize
+\begin{algorithmic}[1]
+\State Set MPCA control parameters ($N_{processors}$, $N_{particles}$, $N_{FE}^{mpca}$, $N_{FE}^{blackboard}$, $s^l$, $s^u$, $R^{inf}$, $R^{sup}$)
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Initial set of particles}
+\State $N_{FE{_i}} = 0$, $N_{FE_i}^{lastUpdate} = 0$
+\For {$j \gets 1 \; \textbf{to} \; N_{particles}$}
+\State $s_{i,j} = $ \Call{RandomSolution}{}
+\State $N_{FE{_i}} = N_{FE{_i}} + 1$
+\EndFor
+\State $s^b_i$ = \Call{UpdateBlackboard}{} \Comment{Initial blackboard}
+\EndFor
+\While{$N_{FE{_{total}}} < N_{FE}^{mpca}$} \Comment{Stopping criteria}
+\State $N_{FE{_{total}}} = 0$
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$}
+\For {$j \gets 1 \; \textbf{to} \; N_{particles}$}
+\State $s^\star_{i,j}$ = \Call{Perturbation}{$s_{i,j}$}
+\If {$J(s^\star_{i,j}) < J(s_{i,j})$}
+\State $s_{i,j}$ = $s^\star_{i,j}$
+\State $s_{i,j}$ = \Call{Exploration}{$s_{i,j}$}
+\Else
+\State $s_{i,j}$ = \Call{Scattering}{$s_{i,j}$, $s^\star_{i,j}$, $s^b_i$}
+\EndIf
+\If {$J(s_{i,j})< J(s^b_i)$}
+\State $s^b_i$ = $s_{i,j}$
+\EndIf
+\EndFor
+\If {$N_{FE{_i}}$ - $N_{FE_i}^{lastUpdate} > N_{FE}^{blackboard}$}
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Blackboard}
+\State $s^b_i$ = \Call{UpdateBlackboard}{}
+\State $N_{FE_i}^{lastUpdate} = N_{FE{_i}}$
+\EndFor
+\EndIf
+\State $N_{FE{_{total}}} = N_{FE{_{total}}} + N_{FE{_i}}$
+\EndFor
+\EndWhile
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Final blackboard}
+\State $s^b_i$ = \Call{UpdateBlackboard}{} 
+\EndFor
+\State \Return $s^b_1$
+\end{algorithmic}
+\end{algorithm}
+
+MPCA has been used in the solution of some optimization problems such as fault diagnosis \cite{echevarria2012aplicacion}, automatic configuration of neural networks applied to atmospheric temperature profile identification \cite{sambattiautomatic}, data assimilation \cite{anochiself} and climate prediction \cite{anochi2014optimization}, as well as in the solution of an inverse radiative problem \cite{hdez2015}, obtaining good results.
+
+A parallel version of MPCA using OpenMPI\footnote{\url{https://www.open-mpi.org/}} was implemented in FORTRAN 90, in a multiprocessor architecture with distributed memory machine.
+
+\subsection{Initial set of particles}
+
+The initial set of particles is constituted by $N_{particles}$ particles. The generation of candidate solutions in the initial set of particles can be performed in two ways: using good solutions known so far, or creating the solution randomly within the search space.
+
+For generating a random solution, each coordinate $d$ of a solution $s =  \left( s_{_1}, \cdots, s_{_n} \right) \in \R^n$ is found as:
+%
+\begin{equation}
+    \label{eq:newrandom}
+    s_{_d} = s^l_{_d} + (s^u_{_d} - s^l_{_d}) \times rand(0,1)
+\end{equation}
+
+\subsection{Perturbation function}
+
+The \texttt{Perturbation} function performs a random variation of a particle within a defined range. A perturbed particle $s^\star$ is completely defined by its coordinates:
+%
+\begin{equation}
+s_{_d}^\star = s_{_d} + \left(s^u_{_d} - s_{_d}\right) R - \left(s_{_d} - s^l_{_d}\right) \left(1 - R\right),
+\end{equation}
+%
+where $s$ is the particle to be perturbed, $s^u_{_d}$ and $s^l_{_d}$ are the upper and the lower limits of the defined search space, respectively, and $R = rand(0,1)$.
+
+The pseudo-code of this function is shown in \autoref{alg:mpcaPerturbation}.
+
+\begin{algorithm}[H]
+\caption{Perturbation function}
+\label{alg:mpcaPerturbation}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Perturbation}{$s$}
+\For {$d \gets 1 \; \textbf{to} \; D$}
+\State $R = rand(0,1)$
+\State $s_{_d}^\star = s_{_d} + \left(s^u_{_d} - s_{_d}\right) R - \left(s_{_d} - s^l_{_d}\right) \left(1 - R\right)$
+\If {{$s_{_d}^\star > s^u_{_d}$}}
+\State $s_{_d}^\star = s^u_{_d}$
+\ElsIf {{$s_{_d}^\star < s^l_{_d}$}}
+\State $s_{_d}^\star = s^l_{_d}$
+\EndIf
+\EndFor
+\State $N_{FE} = N_{FE} + 1$
+\State \Return $s^\star$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+If $J(s^\star) < J(s)$, then the particle $s$ is replaced with $s^\star$, and the \textsc{Exploitation} function (see \autoref{sec:exploitation}) is activated, performing an exploitation in the neighborhood of the particle. If the new perturbed particle $s^\star$ is worse than the current particle $s$, the \textsc{Scattering} function (see \autoref{sec:scattering}) is launched.
+
+\subsection{Exploitation function}
+\label{sec:exploitation}
+
+In this stage, the algorithm performs a series of $N_{FE}^{exploitation}$ small perturbations, computing a new particle $s^\S$ each time, using the following equation for each coordinate:
+%
+\begin{equation}
+s_{_d}^\S = s_{_d} + \left(u - s_{_d}\right) R- \left(s_{_d} - l\right)\left(1 - R\right),
+\end{equation}
+%
+where $u = s_{_d} \times rand(1,R^{sup})$ is the small upper limit, and $l = s_{_d} \times rand(R^{inf},1)$ is the small lower limit, with a superior value $R^{sup}$ and a inferior value $R^{inf}$ for the generation of the random number.
+
+The pseudo-code of this function is shown in \autoref{alg:mpcaExploitation} and \autoref{alg:mpcaSmallPerturbation}.
+
+\begin{algorithm}[H]
+\caption{Exploitation function}
+\label{alg:mpcaExploitation}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Exploitation}{$s$}
+\For {$n \gets 1 \; \textbf{to} \; N_{FE}^{exploitation}$}
+\State $s^\star$ = \Call{SmallPerturbation}{$s$}
+\State $N_{FE} = N_{FE} + 1$
+\If {$J(s^\star) < J(s)$}
+\State $s = s^\star$
+\EndIf
+\EndFor
+\State \Return $s$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Small Perturbation function}
+\label{alg:mpcaSmallPerturbation}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{SmallPerturbation}{$s$}
+\For {$d \gets 1 \; \textbf{to} \; D$}
+\State $u = s_{_d} \cdot rand(1,R^{sup})$
+\State $l = s_{_d} \cdot rand(R^{inf},1)$
+\State $R = rand(0,1)$
+\If {{$u > s^u_{_d}$}}
+\State $u = s^u_{_d}$
+\EndIf
+\If {{$l < s^l_{_d}$}}
+\State $l = s^l_{_d}$
+\EndIf
+\State $s_{_d}^\S = s_{_d} + \left(u - s_{_d}\right) R- \left(s_{_d} - l\right)\left(1 - R\right)$
+\EndFor
+\State \Return $s^\S$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Exploitation in a single random dimension each time}
+
+The exploitation function is modified, performing a small perturbation in only one dimension chosen randomly, as shown in \autoref{alg:mpcaSmallPerturbationModified}.
+
+\begin{algorithm}[H]
+\caption{Small Perturbation in a single random dimension function}
+\label{alg:mpcaSmallPerturbationModified}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{SmallPerturbation}{$s$}
+\State $d = rand(0,1) \times (D - 1) + 1;$
+\State $u = s_{_d} \cdot rand(1,R^{sup})$
+\State $l = s_{_d} \cdot rand(R^{inf},1)$
+\State $R = rand(0,1)$
+\If {{$u > s^u_{_d}$}}
+\State $u = s^u_{_d}$
+\EndIf
+\If {{$l < s^l_{_d}$}}
+\State $l = s^l_{_d}$
+\EndIf
+\State $s_{_d}^\S = s_{_d} + \left(u - s_{_d}\right) R- \left(s_{_d} - l\right)\left(1 - R\right)$
+\State \Return $s^\S$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Scattering function}
+\label{sec:scattering}
+
+The \textsc{Scattering} function works as a Metropolis scheme. The pseudo-code is presented in \autoref{alg:mpcaScattering}.
+
+\begin{algorithm}[H]
+\caption{Scattering function}
+\label{alg:mpcaScattering}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Scattering}{$s$, $s^\star$, $s^b$}
+\State Find $p^s$
+\If {{$p^s > rand(0,1)$}}
+\State $s^n$ = \Call{RandomSolution}{}
+\State $N_{FE} = N_{FE} + 1$
+\Else
+\State $s$ = \Call{Exploration}{$s$}
+\EndIf
+\State \Return $s$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+The particle $s$ is replaced by a new random solution $s^n$ using \autoref{eq:newrandom}, or the exploitation is made, with a given probability.
+
+The scattering probability can be found in some different ways, such as:
+
+\begin{itemize}
+    \item Truncated exponential distribution:
+    \begin{equation}
+    p^s =1-\dfrac{J(s^b)}{J(s)}
+    \end{equation}
+    \item Cauchy distribution:
+    \begin{equation}
+    p^s = \frac{1}{\pi \gamma \left(1 + \left(\dfrac{J(s) - J(s^b)}{\gamma}\right)^2\right)},\quad \gamma = 1
+    \end{equation}
+\end{itemize}
+
+\subsection{Blackboard updating function}
+
+A mechanism called \textit{blackboard updating} allows sending the best solution overall reached in certain moments of the algorithm to the other particles. That moment is determined by the number of function evaluations. Each $N_{FE}^{blackboard}$ evaluations, an update of the best particle will be done.
+
+Each $N_{FE}^{blackboard}$ function evaluations, the best particle overall $s^{\Diamond}$ is elected and sent to all the particles, updating the reference $s^b$.
+
+\begin{algorithm}[H]
+\caption{UpdateBlackboard function using MPI}
+\label{alg:mpcaBlackboard}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{UpdateBlackboard}{$s^b$}
+\If {is master processor}
+\State $s^{\Diamond} = s^b$
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$}
+\State $s$ = \Call{MPI\_RECEIVE}{$i$} \Comment{\parbox[t]{.55\linewidth}{Receive best particle from each processor}}
+\If {{$J(s) < J(s^{\Diamond})$}}
+\State $s^{\Diamond} = P$ \Comment{\parbox[t]{.55\linewidth}{Update the best particle overall}}
+\EndIf
+\EndFor
+\State \Call{MPI\_BROADCAST}{$s^{\Diamond}$} \Comment{\parbox[t]{.55\linewidth}{Send best particle overall to the other processors}}
+\Else \Comment{\parbox[t]{.55\linewidth}{Other processors}}
+\State \Call{MPI\_SEND}{$s^b$} \Comment{\parbox[t]{.55\linewidth}{Send the self best particle to the master processor}}
+\State \Call{MPI\_BROADCAST}{$s^{\Diamond}$} \Comment\parbox[t]{.55\linewidth}{{Wait for the best particle overall}}
+\EndIf
+
+\State \Return $s^{\Diamond}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Stopping criteria}
+
+As for stopping criterion, a maximum number of function evaluations ($N_{FE}^{mpca}$) is defined. 

@@ -1,0 +1,14 @@
+\begin{tikzpicture}[scale=0.010]
+
+\input{images/chapter3_aircraft_whole.tex}
+
+\draw[red,fill=red] (410,372) circle (60pt);
+
+\node[text width=3cm] at (180,110) {\contour{white} {$\Omega_{_1}$}};
+\node[text width=3cm] at (280,210) {\contour{white} {$\Omega_{_2}$}};
+\node[text width=3cm] at (180,280) {\contour{white} {$\Omega_{_3}$}};
+\node[text width=3cm] at (490,200) {\contour{white} {$\Omega_{_4}$}};
+\node[text width=3cm] at (380,310) {\contour{white} {$\Omega_{_5}$}};
+\node[text width=3cm] at (530,410) {\textpdfrender{TextRenderingMode=FillStroke, FillColor=red, StrokeColor=red,  LineWidth=.5pt}{$\Omega_{_6}$}};
+
+\end{tikzpicture}

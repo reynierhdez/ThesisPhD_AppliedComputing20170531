@@ -1,0 +1,23 @@
+\tikzstyle{block} = [draw, fill=white, rectangle, 
+    minimum height=3em, minimum width=8em]
+\newcommand{\Checkmark}{$\color{green}\checkmark$}
+\newcommand{\Cross}{$\mathbin{\tikz [x=1.4ex,y=1.4ex,line width=.2ex, red] \draw (0,0) -- (1,1) (0,1) -- (1,0);}$}%
+\begin{tikzpicture}[auto, node distance=1cm,>=latex']
+\node [block, align=center] (causes) {\footnotesize{\textit{Causes}} \\ Parameters};
+\node [block, right of=causes,node distance=4.5cm, align=center] (system)
+{Model};
+\node [block, right of=system,node distance=4.5cm, align=center] (effects)
+{\footnotesize{\textit{Effects}} \\ Data};
+\draw[-triangle 45] ([yshift=0.3 cm]causes.east) -- ([yshift=0.3 cm]system.west);
+\draw[-triangle 45] ([yshift=0.3 cm]system.east) -- ([yshift=0.3 cm]effects.west);
+\draw[-triangle 45] ([yshift=-0.3 cm]system.west) -- ([yshift=-0.3 cm]causes.east);
+\draw[-triangle 45] ([yshift=-0.3 cm]effects.west) -- ([yshift=-0.3 cm]system.east);
+\node [coordinate, name=ia, above of=causes] {};
+\node [coordinate, name=oa, above of=effects] {};
+\node [coordinate, name=ib, below of=causes] {};
+\node [coordinate, name=ob, below of=effects] {};
+\draw[-latex,thick] (ia)--(oa);
+\draw[-latex,thick] (ob)--(ib);
+\path (ia) -- node (text) {Forward Problem} (oa);
+\path (ob) -- node (text) {Inverse Problem} (ib);
+\end{tikzpicture}

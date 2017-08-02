@@ -1,0 +1,22 @@
+\begin{tikzpicture}
+\tikzstyle{ground}=[fill,pattern=south west lines,draw=none,minimum width=0.75cm,minimum height=0.3cm]
+\begin{scope}[node distance=1.25cm]
+\node[draw,outer sep=0pt] (B1) [minimum width=1.25*10cm, minimum height=1cm]{};
+
+\node (wall2) [ground, rotate=-90, minimum width=1.5cm, yshift=0.84cm-1.2*5cm, below of=B1] {};
+\draw (wall2.north east) -- (wall2.north west);
+
+\fill ($(B1.west) + (1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$1$};
+\fill ($(B1.west) + (2*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$2$};
+\fill ($(B1.west) + (3*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$3$};
+\fill ($(B1.west) + (4*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$4$};
+\fill ($(B1.west) + (5*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$5$};
+\fill ($(B1.west) + (6*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$6$};
+\fill ($(B1.west) + (7*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$7$};
+\fill ($(B1.west) + (8*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$8$};
+\fill ($(B1.west) + (9*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$9$};
+\fill ($(B1.west) + (10*1.25,0)$) circle [radius=2pt] node[right,yshift=-0.1cm,font=\scriptsize] {$10$};
+\draw [latex-, thick , gray] ($(B1.west) + (5*1.25,0)$) -- +(0,1.5cm) node [right] {$F_5$};
+\draw [latex-, thick , gray] ($(B1.west) + (10*1.25,0)$) -- +(0,1.5cm) node [right] {$F_{10}$};
+\end{scope}
+\end{tikzpicture}

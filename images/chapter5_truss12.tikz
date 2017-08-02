@@ -1,0 +1,186 @@
+
+\begin{tikzpicture}
+
+\pgfplotsset{compat=1.11,
+    /pgfplots/ybar legend/.style={
+    /pgfplots/legend image code/.code={%
+       \draw[##1,/tikz/.cd,yshift=-0.25em]
+        (0cm,0cm) rectangle (3pt,0.8em);},
+   },
+}
+
+\begin{axis}[ybar,
+        width=\textwidth,
+        height=6cm,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 12,
+        ymin = -1,
+        ymax = 40,
+        ylabel={\scriptsize Damage percentage},
+        xlabel={\scriptsize Element},
+        title={\footnotesize Noiseless data},
+        xtick pos=left,
+        ytick pos=left,
+        xminorgrids={true},
+        minor x tick num=1,
+        every axis/.append style={
+            font=\tiny
+        },
+        every node near coord/.append style={
+            anchor=west,
+            rotate=90,
+            font=\tiny,
+            /pgf/number format/fixed,
+        },
+        legend entries={Real,$q$-G-HJ, MPCA-HJ},
+        legend columns=1,
+        legend style={draw=none,font=\tiny},
+        legend style={fill=none},
+        legend pos= {north west}
+        ]
+\addplot[draw,
+        fill=white,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{real}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\addplot[draw,
+        fill=yaleblue,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noiselessqg}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\addplot[draw,
+        fill=armygreen,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noiselessmpca}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\pgfplotsset{compat=1.11,
+    /pgfplots/ybar legend/.style={
+    /pgfplots/legend image code/.code={%
+       \draw[##1,/tikz/.cd,yshift=-0.25em]
+        (0cm,0cm) rectangle (3pt,0.8em);},
+   },
+}
+
+\begin{axis}[ybar,
+        width=\textwidth,
+        height=6cm,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 12,
+        ymin = -1,
+        ymax = 40,
+        ylabel={\scriptsize Damage percentage},
+        xlabel={\scriptsize Element},
+        title={\footnotesize Noisy data (2\%)},
+        xtick pos=left,
+        ytick pos=left,
+        xminorgrids={true},
+        minor x tick num=1,
+        every axis/.append style={
+            font=\tiny
+        },
+        every node near coord/.append style={
+            anchor=west,
+            rotate=90,
+            font=\tiny,
+            /pgf/number format/fixed,
+        },
+        legend entries={Real,$q$-G-HJ, MPCA-HJ},
+        legend columns=1,
+        legend style={draw=none,font=\tiny},
+        legend style={fill=none},
+        legend pos= {north west}
+        ]
+        
+\addplot[draw,
+        fill=white,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{real}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\addplot[draw,
+        fill=yaleblue,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noisy2qg}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\addplot[draw,
+        fill=armygreen,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noisy2mpca}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\pgfplotsset{compat=1.11,
+    /pgfplots/ybar legend/.style={
+    /pgfplots/legend image code/.code={%
+       \draw[##1,/tikz/.cd,yshift=-0.25em]
+        (0cm,0cm) rectangle (3pt,0.8em);},
+   },
+}
+\begin{axis}[ybar,
+        width=\textwidth,
+        height=6cm,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 12,
+        ymin = -1,
+        ymax = 40,
+        ylabel={\scriptsize Damage percentage},
+        xlabel={\scriptsize Element},
+        title={\footnotesize Noisy data (5\%)},
+        xtick pos=left,
+        ytick pos=left,
+        xminorgrids={true},
+        minor x tick num=1,
+        every axis/.append style={
+            font=\tiny
+        },
+        every node near coord/.append style={
+            anchor=west,
+            rotate=90,
+            font=\tiny,
+            /pgf/number format/fixed,
+        },
+        legend entries={Real,$q$-G-HJ, MPCA-HJ},
+        legend columns=1,
+        legend style={draw=none,font=\tiny},
+        legend style={fill=none},
+        legend pos= {north west}
+        ]
+        
+\addplot[draw,
+        fill=white,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{real}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\addplot[draw,
+        fill=yaleblue,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noisy5qg}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\addplot[draw,
+        fill=armygreen,
+        nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x = element,y = {create col/expr={100 - 100*\thisrow{noisy5mpca}/\thisrow{integral}}}] \loaddataqgtruss;
+
+\end{axis}
+
+\end{tikzpicture}

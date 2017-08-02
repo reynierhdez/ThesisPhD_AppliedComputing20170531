@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+\begin{scope}[rotate around y=-30,scale=0.4]
+
+\filldraw[gray!70!black,fill=gray!10] (0,0,0) circle (1.65);
+
+\def\arca {([shift=(290:-1.65)]0,0,0) arc (290:110:-1.65 and -1.65)}
+\def\arcb {([shift=(110:-1.65)]0,0,9) arc (110:290:-1.65 and -1.65)}
+
+\path[draw=gray!70!black,bottom color=gray,top color=gray!10,shading=axis,shading angle=45] \arcb -- \arca -- cycle;
+
+\filldraw[gray!70!black,fill=gray!10] (0,0,9) circle (1.65);
+\filldraw[draw=gray!70!black,top color=gray,bottom color=gray!10,shading=axis,shading angle=45] (0,0,9) circle (1.05);
+
+\end{scope}
+\end{tikzpicture}

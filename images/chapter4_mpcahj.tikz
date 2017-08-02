@@ -1,0 +1,14 @@
+\begin{tikzpicture}[node distance=2.25cm]
+
+\node (start) [startstop] {Start};
+\node (pro1) [process, below of=start, yshift=-0.5cm]  {\begin{varwidth}{8.5cm}\centering {Global search} {(Exploration Stage)\\\vspace{0.5em}{\bf MPCA}\\\vspace{0.25em}+\\\vspace{0.25em}\fbox{\parbox{.5\textwidth}{\centering \bf Opposition}}}\end{varwidth}};
+\node (pro2) [process, below of=pro1, yshift=-0.5cm] {\begin{varwidth}{7.5cm}\centering {Local search} {(Intensification Stage)\\\vspace{0.5em}{\bf HJ}}\end{varwidth}};
+\node (out1) [io, below of=pro2, yshift=0.4cm] {Best Solution};
+\node (stop) [startstop, below of=out1, yshift=0.4cm] {Stop};
+
+\draw [arrow] (start) -- (pro1);
+\draw [arrow] (pro1) -- (pro2);
+\draw [arrow] (pro2) -- (out1);
+\draw [arrow] (out1) -- (stop);
+
+\end{tikzpicture}

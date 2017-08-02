@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+
+\draw (0,0) circle (0.1);
+\draw (4.1,0) circle (0.1);
+
+\draw[-latex, thick] (-1,0) -- (-0.1,0) node[midway,above] {$f_{1x}, u_1$};
+\draw[-latex, thick] (4.2,0) -- (5.2,0) node[midway,above] {$f_{2x}, u_2$};
+\draw [spring] (0.1,0) -- (4,0);
+
+\draw [-] (-0.1,-0.8) -- (-0.1,-1.2);
+\draw [-] (4.2,-0.8) -- (4.2,-1.2);
+\draw [latex-latex] (-0.1,-1) -- (4.2,-1) node[midway,above] {$\ell$};
+
+\end{tikzpicture}

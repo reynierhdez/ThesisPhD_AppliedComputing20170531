@@ -1,0 +1,337 @@
+\section{Opposition-Based Optimization and some mechanisms derived}
+\label{sec:obl}
+
+The Opposition-based Learning (OBL) mechanism was created by \citeonline{Tizhoosh2005} in 2005. The idea of OBL is to consider the opposite of a candidate solution, which has a certain probability of being closer to the global optimum.
+
+Some mechanisms derived from OBL have been developed, such as \textbf{Quasi-opposition} (QO), \textbf{Quasi-reflection} (QR), \textbf{Center-based} sampling (CB), and Rotation-based Learning (RBL) \cite{ergezer2009oppositional,rahnamayan2007quasi,tizhoosh2008oppositional}. QO reflects a point to a random point between the center of the domain and the opposite point. QR projects the point to a random point between the center of the domain and itself. CB creates a point between itself and its opposite.
+
+In a short amount of time, these mechanisms have been utilized in different soft computing areas, improving the performance of various techniques of Computational Intelligence, such as metaheuristics, artificial neural networks, fuzzy logic, and other applications \cite{xu2014review}.
+
+For better understanding the mechanism, it is necessary to define the concept of some specific numbers.
+
+\begin{definition}
+Let $s \in \left[s^l, s^u\right]$ be a real number, and $c = (s^l + s^u) / 2$. The opposite number $s_o$, the quasi-opposite number $s_{qo}$, the quasi-reflected number $s_{qr}$, and the center-based sampled number $s_{cb}$ are defined as:
+%
+\begin{align}
+s_o =& s^l + s^u - s;\\
+s_{qo} =& rand(s_o,c);\\
+s_{qr} =& rand(c,s);\\
+s_{cb} =& rand(s_o,s).
+\end{align}
+
+\end{definition}
+
+\autoref{fig:number} shows a graphical representation of these numbers.
+
+\begin{figure}[H]
+\caption{Graphical representation of the opposition number ($s_o$), quasi-opposite number ($s_{qo}$), quasi-reflected number ($s_{qr}$) and center-based sampled number ($s_{cb}$) from the original number $s$}
+\label{fig:number}
+\centering
+\vspace{1em}
+\includegraphics{images/chapter4_opposition.tikz}
+\end{figure}
+
+\begin{definition}
+\label{def:obl}
+Let $s=(s_{_1}, \cdots, s_{_D}) \in \R^D$ be a point, $s_{_d} \in \left[s^l_{_d}, s^u_{_d}\right], \forall d \in \left(1, \dots, n\right)$. The opposite point $s_o$, the quasi-opposite point $s_{qo}$, the quasi-reflected point $s_{qr}$, and the center-based sampled point $s_{cb}$ are completely defined by their coordinates:
+%
+\begin{align}
+s_{o_d} =& s^l_{_d} + s^u_{_d} - s_{_d};\\
+s_{qo_d} =& rand(s_{o_d},c_{_d});\\
+s_{qr_d} =& rand(c_{_d},s_{_d});\\
+s_{cb_d} =& rand(s_{o_d},s_{_d}).
+\end{align}
+
+\end{definition}
+
+The Rotation-Based Learning (RB) mechanism is another extension of the OBL \cite{Liu2014}, and the Rotation-Based Sampling (RBS) is a combination of the Center-Based Sampling and RBL mechanisms.
+
+\begin{definition}
+Let $s \in \left[s^l, s^u\right]$ be a real number, and $c = (s^l + s^u) / 2$ be the center. Draw a circle with center $c$ and radius $c-s^l$. The point $(s, 0)$ is projected on the circle. Defining the quantity from the original number to the center $u = s - c$, the lenght from the original number to the corresponding intersection point $l$ on the circle $v = \sqrt{ \left(s - s^l \right)\left( s^u - s \right)}$, and the deflection angle $\beta = \beta_0 \, \mathcal{N}(1, \delta)$, with mean $\beta_0$ and standard deviation $\delta$. The rotation number $s_r$ is defined as:
+%
+\begin{equation}
+s_{r} = c + u \times \cos \beta - v \times \sin \beta
+\end{equation}
+
+\end{definition}
+
+\begin{definition}
+The rotation-based sampling number $s_{rbs}$ is defined as:
+\begin{equation}
+s_{rbs} = rand(s_r,s)
+\end{equation}
+
+\end{definition}
+
+The geometric representation in a 2D-space of the Rotation and the Rotation-Based Sampling numbers is shown in Figure~\ref{fig:rbl}.
+
+\begin{figure}[H]
+\caption{Geometric interpretation of the Rotation ($s_r$) and the Rotation-based Sampling ($s_{rbs}$) numbers in 2D space}
+\label{fig:rbl}
+\centering
+\vspace{1em}
+\begin{tikzpicture}
+
+\draw[-latex,thick] (-2.5,0)--(2.5,0) node[right]{$x$};
+\draw[-latex,thick] (-2.2,-2.0)--(-2.2,2.0) node[above]{$y$};
+
+\coordinate (O) at (0,0);
+
+\draw[dotted] (O) node[
+label={[xshift=-2.0cm, yshift=-0.7cm]\footnotesize $s^l$},
+label={[xshift=2.0cm, yshift=-0.7cm]\footnotesize $s^u$},
+label={[xshift=0.0cm, yshift=-0.7cm]\footnotesize $c$},
+label={[xshift=1.7cm, yshift=-0.7cm]\footnotesize $s$},
+label={[xshift=1.9cm, yshift=0.7cm]\footnotesize $l$},
+label={[xshift=-1.7cm, yshift=-0.75cm]\footnotesize $s_r$}] {} circle [radius=\myrad,dotted];
+
+\draw[-,semithick] (0,-0.1) -- (0,0.1);
+\draw[-,semithick] (-2,-0.1) -- (-2,0.1);
+\draw[-,semithick] (2,-0.1) -- (2,0.1);
+
+\draw[-,semithick] (\myang:\myrad)+(0,-1.1cm) -- (\myang:\myrad);
+\draw[-,semithick] (\myang+130:\myrad)+(0,-0.8cm) -- (\myang+130:\myrad);
+
+\coordinate (a) at (-1.85,-0.5);
+\coordinate (d) at (1.7,-0.5);
+\draw[decorate,decoration={brace,amplitude=5pt,raise=0.5pt},color=black,rotate=90] (d) -- (a) node [midway,yshift=-11pt] {\footnotesize $s_{rbs}$};
+
+\draw 
+  (\myrad,0) coordinate (xcoord) -- 
+  node[midway,below] {} (O) -- 
+  (\myang:\myrad) coordinate (slcoord)
+  pic [draw,-latex,angle radius=1cm] {angle = xcoord--O--slcoord};
+
+\draw 
+  (\myrad,0) coordinate (xcoord) -- 
+  node[midway,below] {} (O) -- 
+  (\myang+130:\myrad) coordinate (slcoord)
+  pic [draw,-latex,angle radius=0.8cm] {angle = xcoord--O--slcoord};
+
+\node at ($(O)+(15:12mm)$) {\footnotesize $\theta$};
+\node at ($(O)+(85:10mm)$) {\footnotesize $\theta + \beta$};
+
+\end{tikzpicture}
+\end{figure}
+
+Similarly to \autoref{def:obl}, the concepts of rotation and rotation-based sampling points are enunciated:
+
+\begin{definition}
+Let $s = (s_{_1}, \cdots, s_{_D}) \in \R^D$ be a point, and $s_{_d} \in \left[s^l_{_d}, s^u_{_d}\right], \forall d \in \left(1, \cdots, D \right)$. The rotation point $s_r$, is completely defined by their coordinates:
+%
+\begin{equation}
+s_{r_{d}} = c_{_d} + u_{_d} \times \cos \beta - v_{_d} \times \sin \beta
+\end{equation}
+
+\end{definition}
+
+\begin{definition}
+Let $s = (s_{_1}, \cdots, s_{_D}) \in \R^D$ be a point, and $s_{_d} \in \left[s^l_{_d}, s^u_{_d}\right], \forall d \in \left(1, \cdots, D \right)$. The rotation-based sampling number $s_{rbs}$ is completely defined by their coordinates:
+%
+\begin{equation}
+s_{rbs_d} = rand(s_{r_d},s_{_d})
+\end{equation}
+
+\end{definition}
+
+\begin{definition} \textbf{Opposition-based Optimization --}
+Let $s \in \R^D$ be a point (\textit{i.e.}, candidate solution), and $s_o$ a opposite point of $s$ (i.e., opposite candidate solution). If $J(s_o) \leq J(s)$, then the point $s$ can be replaced with $s_o$, which is better, otherwise it will maintain its current value.
+\end{definition}
+
+The solution and the opposite solution are evaluated simultaneously, and the optimization process will continue with the better one.
+
+The same idea of the Opposition-based Optimization is applicable for the other mechanisms. To abbreviate, when the text refers to all these mechanisms, will be used without distinction OBO or Opposition. \autoref{alg:3} shows a pseudo-code of a possible computational implementation of the Opposition.
+
+\begin{algorithm}[H]
+\centering
+\caption{Opposition function}
+\label{alg:3}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Opposition}{$s$}
+\For {$d \gets 1 \; \textbf{to} \; D$}
+\State Obtain $ s^l_{_d} $, $ s^u_{_d} $
+\State $ c_{_d} = \dfrac{\left( s^l_{_d} + s^u_{_d} \right)}{2} $ \Comment{Calculate center of the search space}
+\State $ s_{o_d}  = s^l_{_d} + s^u_{_d} - s_{_d} $
+\Comment{Calculate opposite point}
+\State $ R = rand(0,1) $
+\Switch{type}
+\Case{quasi-opposition}
+\If{$ s_{_d} < c_{_d} $}
+\State $ s_{o_d} = c_{_d} + R \left(s_{o_d} - c_{_d} \right) $
+\Else
+\State $ s_{o_d} = s_{o_d} + R \left(c_{_d} - s_{o_d} \right) $
+\EndIf
+\EndCase
+\Case{quasi-reflected}
+\If{$ s_{_d} < c_{_d} $}
+\State $ s_{o_d} = s_{_d} + R \left(c_{_d} - s_{_d} \right) $
+\Else
+\State $ s_{o_d} = c_{_d} + R \left(s_{_d} - c_{_d} \right) $
+\EndIf
+\EndCase
+\Case{center-based sampling}
+\If{$ s_{_d} < c_{_d} $}
+\State $ s_{o_d} = s_{_d} + R \left(s_{o_d} - s_{_d} \right) $
+\Else
+\State $ s_{o_d} = s_{o_d} + R \left(s_{_d} - s_{o_d} \right) $
+\EndIf
+\EndCase
+\Case{rotation-based sampling}
+\State $ u_{_d} = s_{_d} - c_{_d} $
+\State $ v_{_d} = \sqrt{\left(s_{_d} - s^l_{_d} \right)\left( s^u_{_d} - s_{_d} \right)} $
+\State $ s_{r_d} = c_{_d} + u_{_d} \times \cos \beta - v_{_d} \times \sin \beta$
+
+\If{$ s_{_d} < c_{_d} $}
+\State $ s_{o_d} = s_{_d} + R \left(s_{r_d} - s_{_d} \right) $
+\Else
+\State $ s_{o_d} = s_{r_d} + R \left(s_{_d} - s_{r_d} \right) $
+\EndIf
+\EndCase
+\Default \Comment{Opposition}
+\State $ s_{o_d} =  s_{o_d} $
+\EndDefault
+\EndSwitch
+\EndFor
+\State $N_{FE} = N_{FE} + 1$
+\If {$J(s_o) < J(s)$}
+\State \Return $s_o$
+\Else
+\State \Return $s$
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Multi-Particle Collision Algorithm with Opposition-Based Optimization derived mechanisms}
+\setcounter{equation}{0}
+\label{sec:4}
+
+The hybrid of MPCA with Opposition is defined as follows. The pseudo-code of the computational implementation of the generic algorithm is shown in \autoref{alg:ompca}.
+
+\begin{algorithm}[H]
+\caption{Multi-Particle Collision Algorithm with Opposition}
+\label{alg:ompca}
+\footnotesize
+\begin{algorithmic}[1]
+\State Set MPCA control parameters ($N_{processors}$, $N_{particles}$, $N_{FE}^{mpca}$, $N_{FE}^{blackboard}$, $s^l$, $s^u$, $R^{inf}$, $R^{sup}$)
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Initial set of particles}
+\State $N_{FE_i} = 0$, $N_{FE_i}^{lastUpdate} = 0$
+\For {$j \gets 1 \; \textbf{to} \; N_{particles}$}
+\State $s^\star_{i,j} = $ \Call{RandomSolution}{}
+\State $N_{FE_i} = N_{FE_i} + 1$
+\State $s^\star_{i,j} = $ \Call{Opposition}{$s^\star_{i,j}$} \label{alg:line:ompca6}
+\EndFor
+\EndFor
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Initial blackboard}
+\State $s^b_i$ = \Call{UpdateBlackboard}{} 
+\EndFor
+\While{$N_{FE_i} < N_{FE}^{mpca}$} \Comment{Stopping criteria}
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$}
+\For {$j \gets 1 \; \textbf{to} \; N_{particles}$}
+\State $s_{i,j}$ = \Call{Perturbation}{$s^\star_{i,j}$}
+\If {$J(s_{i,j}) < J(s^\star_{i,j})$}
+\State $s^\star_{i,j}$ = $s_{i,j}$
+\State $s^\star_{i,j}$ = \Call{Exploration}{$s^\star_{i,j}$}
+\Else
+\State $s^\star_{i,j}$ = \Call{Scattering}{$s^\star_{i,j}$, $s_{i,j}$, $s^b_i$}
+\EndIf
+\If {$J(s^\star_{i,j})< J(s^b_i)$}
+\State $s^b_i$ = $s^\star_{i,j}$
+\EndIf
+\State $s^b_i = $ \Call{Opposition}{$s^b_i$} \label{alg:line:ompca20}
+\EndFor
+\EndFor
+\If {$N_{FE_i}$ - $N_{FE_i}^{lastUpdate} > N_{FE}^{blackboard}$}
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Final blackboard}
+\State $s^b_i$ = \Call{UpdateBlackboard}{}
+\State $N_{FE_i}^{lastUpdate} = N_{FE_i}$
+\EndFor
+\EndIf
+\EndWhile
+\For {$i \gets 1 \; \textbf{to} \; N_{processors}$} \Comment{Final blackboard}
+\State $s^b_i$ = \Call{UpdateBlackboard}{} 
+\EndFor
+\State \Return $s^b_1$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Initialization using Opposition}
+
+Random number generation is commonly the most used choice to create an initial population. The use of opposition working together with randomness permits to obtain better-starting candidates even when there is no \textit{a priori} knowledge about the solution.
+
+In the proposed hybrid versions, the first step is to create the initial solution for each particle as usual. Next, the opposite solution is calculated within the search space $\left[ s^l_{_d}, s^u_{_d} \right]$. The original solution is substituted by the opposite if the latter has a better fitness (see \autoref{alg:ompca}, line~\ref{alg:line:ompca6}).
+
+\subsection{Traveling in the search space using Opposition}
+
+The application of Opposition on the traveling of the particles in the search space is dependent on the MPCA function being called.
+
+When the \texttt{Perturbation} function is applied on a particle, the opposite particle is calculated at the same time. The best particle among them will be maintained as the new particle (see \autoref{alg:mpcaPerturbationOpposition}, line~\ref{alg:line:mpcaPerturbationOpposition10}). The bounds to create the opposite particle is dynamically reduced to $\left[ s^l_{_d}, s^u_{_d} \right]$, where $s^l_{_d}$ and $s^u_{_d}$ are the minimum and maximum values for each dimension in all the population of particles.
+
+\begin{algorithm}[H]
+\caption{Perturbation function with Opposition}
+\label{alg:mpcaPerturbationOpposition}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Perturbation}{$s$}
+\For {$d \gets 1 \; \textbf{to} \; D$}
+\State $R = rand(0,1)$
+\State $s_{_d}^\star = s_{_d} + \left(s^u_{_d} - s_{_d}\right) R - \left(s_{_d} - s^l_{_d}\right) \left(1 - R\right)$
+\If {{$s_{_d}^\star > s^u_{_d}$}}
+\State $s_{_d}^\star = s^u_{_d}$
+\ElsIf {{$s_{_d}^\star < s^l_{_d}$}}
+\State $s_{_d}^\star = s^l_{_d}$
+\EndIf
+\EndFor
+\State $N_{FE} = N_{FE} + 1$
+\State $s^\star$ = \Call{Opposition}{$s^\star$} \label{alg:line:mpcaPerturbationOpposition10}
+\State \Return $s^\star$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+When the \texttt{Exploration} is performed, an opposite particle is also calculated, with a jumping rate $J_r$ (see \autoref{alg:mpcaExploitationOpposition}, lines~\ref{alg:line:mpcaExploitationOpposition6}). The bounds to create the opposite particle is dynamically reduced to $\left[ s^l_{_d}, s^u_{_d} \right]$, as was done in the \texttt{Perturbation} function.
+
+\begin{algorithm}[H]
+\caption{Exploitation function with Opposition}
+\label{alg:mpcaExploitationOpposition}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Exploitation}{$s$}
+\For {$n \gets 1 \; \textbf{to} \; N_{FE_{exploitation}}$}
+\State $s^\star$ = \Call{SmallPerturbation}{$s$}
+\State $N_{FE} = N_{FE} + 1$
+\If {$rand(0,1) < J_r$}
+\State $s^\star$ = \Call{Opposition}{$s^\star$} \label{alg:line:mpcaExploitationOpposition6}
+\EndIf
+\If {$J(s^\star) < J(s)$}
+\State $s = s^\star$
+\EndIf
+\EndFor
+\State \Return $s$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+In the \texttt{Scattering} function, if a random particle is created, then the opposite particle is also created using the original bounds $\left[ s^l_{_d}, s^u_{_d} \right]$. The best particle among then will be maintained (see \autoref{alg:mpcaScatteringOpposition}, line~\ref{alg:mpcaScatteringOpposition6}).
+
+\begin{algorithm}[H]
+\caption{Scattering function with Opposition}
+\label{alg:mpcaScatteringOpposition}
+\footnotesize
+\begin{algorithmic}[1]
+\Function{Scattering}{$s$, $s^\star$, $s^b$}
+\State Find $p^s$
+\If {{$p^s > rand(0,1)$}}
+\State $s^n$ = \Call{RandomSolution}{}
+\State $N_{FE} = N_{FE} + 1$
+\State $s$ = \Call{Opposition}{$s^n$} \label{alg:mpcaScatteringOpposition6}
+\Else
+\State $s$ = \Call{Exploration}{$s$}
+\EndIf
+\State \Return $s$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+After applying \texttt{Perturbation}, \texttt{Exploration}, and \texttt{Scattering} functions to generate the new solution, the opposite of the best particle heretofore is calculated using the computed limits $\left[ s^l_{_d}, s^u_{_d} \right]$ (see \autoref{alg:ompca}, line~\ref{alg:line:ompca20}).

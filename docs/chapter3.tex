@@ -1,0 +1,264 @@
+\chapter{Vibration-based Damage Identification solved as optimization problem}
+\label{chp:3}
+\epigraph{A problem well-stated is a problem half-solved.}{John Dewey}
+
+\tikzstyle{spring}=[thick,decorate,decoration={zigzag,pre length=0.5cm,post length=0.5cm,segment length=15,amplitude=1em}]
+
+In the first chapter, the main concepts on the SDI were introduced. A literature review was done on the different methods for SDI, and the classification of those methods was presented.
+
+In this chapter, the Vibration-based Damage Identification (VDI) will be defined as an optimization problem.
+
+First, the main concepts about inverse problems in engineering will be presented. Then, the VDI will be defined as an optimization problem, and the damage parameters and the objective function will be defined.
+
+\section{Basic concepts of optimization}
+
+Optimization is the area of the Applied Mathematics that studies the theory and techniques to find the best available values to optimize (minimize or maximize) some objective function, also called error function or cost function. Typical applications of optimization are to find the minimal cost, maximal profit, minimal error, optimal design and optimal management. Many books handle the concepts of the optimization area, such as \citeonline{rothlauf2011design}.
+
+\begin{definition} 
+An \textbf{optimization problem} is the problem of finding the best solution from all feasible solutions. 
+\end{definition}
+
+A solution is \textbf{feasible} if it satisfies all constraints.
+
+\begin{definition}
+A \textbf{candidate solution} $s$ is an element of the search space $\mathcal{S}$ of a certain optimization problem.
+\end{definition}
+
+\begin{definition}
+The \textbf{search space} $\mathcal{S}$ of an optimization problem is the set containing all element $s$ which could be its solution.
+\end{definition}
+
+An optimization problem can be classified depending on the existence of constraints. In an \textbf{unconstrained} optimization problem, the objective function depends on variables with no restrictions, and in a \textbf{constrained} optimization problem, the objective function is subject to constraints on the variables.
+
+\begin{definition}
+The standard form of a unconstrained optimization problem is:
+%
+\begin{align}
+\begin{split}
+    \underset{s}{\text{minimize}} \quad & J_i(s) \; i = 1, \cdots, n_j \\
+    \text{subject to} \quad & s \in \mathcal{S}
+\end{split}
+\end{align}
+%
+where $s = \left( s_1, s_2, \cdots s_D \right)$ is a vector of $D$ \textbf{decision variables}, and $J_i: \R^D \to \R$ are the \textbf{objective functions} (also known as error functions, or cost functions depending on the problem to be solved) to be minimized over the variable $s$, and $\mathcal{S} = \R^D$.
+
+\end{definition}
+
+\begin{definition}
+The \textbf{globally optimal solution} $s^* \in \mathcal{S}$ of a objective function $J$ is defined as:
+%
+\begin{equation}
+    J(s^*) \leq J(s) \quad \forall s \in \mathcal{S}
+\end{equation}
+%
+
+\end{definition}
+
+\begin{definition}
+A \textbf{locally optimal solution} $s^\prime \in \mathcal{S}$ of a objective function $J$ with respect to a neighborhood function $\mathcal{N}$ is defined as: 
+%
+\begin{equation}
+    J(s^\prime) \leq J(s) \quad \forall s \in \mathcal{N}(s^\prime)
+\end{equation}
+
+If $\mathcal{S} \subseteq \R^D$:
+
+\begin{equation}
+    \forall s^\prime  \exists \varepsilon > 0 : J(s^\prime) \leq J(s) \forall s \in \mathcal{S}, \mid s - s^\prime \mid < \varepsilon
+\end{equation}
+
+\end{definition}
+
+\autoref{fig:minima} shows a graphical representation of local and global minima.
+
+\begin{figure}[H]
+\caption{Local and global minima}
+\label{fig:minima}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+ymin=26,
+ymax=52,
+xmax=64,
+xmin=0,
+xticklabel=\empty,
+yticklabel=\empty,
+axis lines = left,
+xlabel=$s$,
+ylabel=$J(s)$,
+label style = {at={(ticklabel cs:1)}},
+y label style = {rotate=-90}
+]
+\addplot[smooth] coordinates {
+(0,45)
+(10,35)
+(20,40)
+(30,30)
+(40,47)
+(50,40)
+(60,50)
+};
+\fill[blue] (10,35) circle (2pt) node[below] {$s^\prime$};
+\fill[red] (30,30) circle (2pt) node[below] {$s^*$};
+\fill[blue] (50,40) circle (2pt) node[below] {$s^\prime$};
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+There are many ways for classifying the optimization problems. They can be divided into \textbf{continuous} when the variables are allowed to get any value within a range; or \textbf{discrete}, when the variables are required to belong to a discrete set. This set could be a subset of integers (called \textit{integer programming}) or a set of objects or combinatorial structures (called \textit{combinatorial optimization}). Also, exist some problems where the domain is \textbf{mixed}.
+
+The nature of the variables divides the optimization problems into two groups: \textbf{deterministic} when the data for the given problem are known accurately, and \textbf{stochastic} or non-deterministic when some or all the design variables are probabilistic.
+
+The optimization problems can also be classified according to the number of objective functions. A \textbf{mono-objective} problem is when there is only an objective function, while a \textbf{multi-objective} problem have more than one objective function that can be minimized or maximized simultaneously.
+
+The standard form of a constrained mono-objective optimization problem is:
+%
+\begin{align}
+\begin{split}
+    \underset{s}{\text{minimize}} \quad &J(s) \\
+    \text{subject to} \quad &g_j(s) \leq 0, \; j = 1, \cdots, n_g \\
+    & h_k(s) = 0, \; k = 1, \cdots, n_h
+\end{split}
+\end{align}
+%
+where $g_j$ are called inequality constraints, and $h_k$ are called equality constraints.
+
+\section{Inverse problems in engineering}
+
+A model can be simply described as the relationship between the parameters and the data, that is useful for simulating and predicting aspects of the behavior of a system. A model represents a real system as symbols and using the language of other sciences. For instance, an engineering process may be modeled using mathematical symbols and computer sciences \cite{alavala2008finite}.
+
+The process of finding data based on a model using a set of parameters as input is called as \textbf{forward problem} while estimating a set of parameters of a model based on a set of data is known as \textbf{inverse problem} \cite{CamposVelho2001problemas,silvaneto2005problemas,camposvelho2008}. A schematic representation of these processes is shown in \autoref{fig:problems}.
+
+\begin{figure}[H]
+    \caption{Schematic representation of the forward and inverse problems}
+    \label{fig:problems}
+    \centering
+    \includegraphics{images/chapter1_forwardinverse.tikz}
+\end{figure}
+
+In an inverse problem, the \textbf{parameters} are the numerical values to be estimated, and the \textbf{data} are the observations or measurements made on the system of interest.
+
+Inverse problems are found in almost every field of science and mathematics, such as optics, radar, acoustics, communication theory, signal processing, medical imaging, computer vision, geophysics, oceanography, astronomy, remote sensing, natural language processing, machine learning, nondestructive testing, among others.
+
+The following three conditions were suggested by Jacques Hadamard for a well-posed problem:
+
+\begin{enumerate}
+    \item Existence: A solution of the problem exists;
+    \item Uniqueness: The solution is unique;
+    \item Stability: The solution depends continuously on the data.
+\end{enumerate}
+
+Usually, inverse problems violate all the three conditions, being therefore ill-posed. For handling this issue, some special methods are used, called regularization methods (e.g., Lavrentiev Regularization, Tikhonov Regularization, and Asymptotic Regularization). These methods transform an ill-posed problem into a well-posed problem, closer to the original problem. With the using of soft or regular solutions, these techniques can control the influence of the noise, and prevent over-fitting.
+
+Some other methods for solving inverse problems are Variational method, Least squares method, filtering methods, neural networks, and Monte Carlo methods.
+    
+\section{Vibration-based Damage Identification as an Inverse Problem}
+
+Dynamic processes modeling in mechanical vibration is characterized by knowing initial and boundary conditions, the geometry of the structure, material properties, and forcing terms. The system output response is the measurement of displacement, accelerations, strains, stresses, natural frequencies, and modes shapes. In vibration systems, modal parameters are a function of the physical properties of the structure (such as mass, damping, and stiffness). Therefore, a change in the physical properties (caused by cracks, loosening of connections or another possible damage) will cause detectable variations in the modal properties.
+
+The inverse problem of damage evaluation consists in detecting, localizing and quantifying the damage severity. In this thesis, the damage severity is obtained by estimating the stiffness values from structural displacements and modal properties measurements.
+
+The inverse problem can be formulated as an optimization problem.  \autoref{fig:opt} shows a graphical representation of the inverse solution for a generic structure. Parameter $\Theta^e$ represents the influence of environmental and operational conditions (e.g. temperature, and humidity), and $\Theta^d$ are the damage parameters (e.g. crack length, loss of stiffness, and loss of mass) \cite{Fritzen2009}. The displacements ${u}^{{mod}}$ are obtained running the structural model with a stiffness vector $k^d$, and the measured displacements ${u}^{{obs}}$ are acquired from the sensors in the vibration experiments.
+
+\begin{figure}[H]
+    \caption{Vibration-Based Damage Identification as optimization problem}
+    \label{fig:opt}
+    \centering
+    \vspace{1em}
+    \resizebox{0.8\textwidth}{!}{\includegraphics{images/chapter3_inversesolution.tikz}}
+\end{figure}
+
+\subsection{Damage parameters}
+The damage parameters $\Theta^d$ are defined as the percentage of loss of stiffness at each element to be monitored:
+%
+\begin{equation}
+\label{eq:thetad}
+\Theta^d = \left( 1 - \frac{k^d}{k^i} \right) \times 100\%\,,
+\end{equation}
+%
+where $k^d = \left(k^d_1, k^d_2, \cdots, k^d_n\right)$ and $k^i = \left(k^i_1, k^i_2, \cdots, k^i_n\right)$ are the estimated stiffness vector for the damaged system, and the stiffness vector of the undamaged system, respectively.
+
+\subsection{Objective function}
+
+The optimization problem can be stated as follows:
+%
+\begin{align}
+\begin{split}
+    \underset{\Theta^d}{\text{minimize}} \quad & J\left(\Theta^d\right) = \sum_{m=1}^{n_m} e_m^2\left(\Theta^d\right) \\
+    \text{subject to} \quad & \Theta^{\rm d^{l}} \leq \Theta^d \leq \Theta^{\rm d^{u}}
+\end{split}
+\end{align}
+%
+where $n_m$ is the number of measured displacements, and $\Theta^{\rm d^{l}}$ and $\Theta^{\rm d^{u}}$ are the lower and upper bounds for the damage parameters, respectively.
+
+The residuals $e_m$ are computed as:
+
+\begin{equation}
+    e_m = \sum_{t=0}^{t_f} {u}_m^{{obs}}(t) - {u}_m^{{mod}}(\Theta^d, t)
+\end{equation}
+
+in which $t$ represents the time, and $t_f$ is the final time.
+
+\section{Hierarchical Approach}
+
+The hierarchical search applied to the SDI follows the idea of the Latin concept \textit{Divite et impera}
+
+Following the ``Divide et impera'' lemma appears the hierarchical approach to solve the structural damage identification problem. The idea is to reduce the computational cost in the process. The hierarchical approach for damage detection consists in three steps \cite{Santos2014}:
+
+\begin{description}[style=sameline]
+\item[First step] Define the whole structure to be analyzed, with its physical and geometric properties (length, Young module, and material density)
+\item[Second step] Perform the vibration test obtaining the displacement measures in all possible points
+\item[Third step] The structure is modeled in finite elements, coarsely with a low number of degrees of freedom (DOF), and the optimization problem is solved. As well as damaged areas are being detected, an iterative process of refining is performed, remodeling the area where the damage is found.
+\end{description}
+
+The third step will execute the hierarchical search, looking for damages in a sequence of refinement steps of the model. For each iteration, involving the second and the third steps, the structure will be refined, resulting with more DOF than the previous model.
+
+\autoref{fig:hierarchical} presents a didactic example (not at all real) of damage identification on a aircraft, through the hierarchical search. The whole structure of the aircraft is represented as $\Omega$ in the \autoref{fig:aircraft1}.
+
+\begin{figure}[H]%
+\centering
+\caption[Hierarchical search]{Hierarchical search:
+\subref{fig:aircraft1} the whole structure;
+\subref{fig:aircraft1} first stage: the aircraft is divided into six main parts;
+\subref{fig:aircraft1} second stage: the tail of the aircraft is divided into more three parts \subref{fig:aircraft1} third stage: the left wing of the tail is divided into more six parts}%
+\label{fig:hierarchical}%
+\subfigure[]{%
+\label{fig:aircraft1}%
+\begin{minipage}{0.49\textwidth}
+\centering
+\includegraphics{images/chapter3_aircraft1.tikz}
+\end{minipage}}
+%
+\subfigure[]{%
+\label{fig:aircraft2}%
+\begin{minipage}{0.49\textwidth}
+\centering
+\includegraphics{images/chapter3_aircraft2.tikz}
+\end{minipage}}\\
+\subfigure[]{%
+\centering
+\label{fig:aircraft3}%
+\begin{minipage}{0.49\textwidth}
+\centering
+\includegraphics{images/chapter3_aircraft3.tikz}
+\end{minipage}}
+%
+\subfigure[]{%
+\label{fig:aircraft4}%
+\begin{minipage}{0.49\textwidth}
+\centering
+\includegraphics{images/chapter3_aircraft4.tikz}
+\end{minipage}}
+\end{figure}
+
+The first step for performing the identification process is to divide the aircraft into its six main parts, as shown in \autoref{fig:aircraft2}. Those parts are: $\Omega_{_1}$ front part of the plane body; $\Omega_{_2}$ medium part of the plane body; $\Omega_{_3}$ right wing; $\Omega_{_4}$ left wings; $\Omega_{_5}$ rear part of the plane body, and $\Omega_{_6}$ vertical and horizontal stabilizer, rudder and elevator, as a whole.
+
+Suppose that, from the vibration test with these six elements, damage was found in $\Omega_{_6}$. The damage is identified in the \autoref{fig:aircraft2} with a small red circle. The next step is to refine this part in simpler parts. In this case, $\Omega_{_6}$ is divided in three parts , as shown in \autoref{fig:aircraft3}: right horizontal stabilizer and elevator ($\Omega_{_{6,1}}$), vertical stabilizer and rudder ($\Omega_{_{6,2}}$), and left horizontal stabilizer and elevator ($\Omega_{_{6,3}}$). Now, the forward model is run with eight gross elements.
+
+Suppose again that in the last identification process, the damage was located in the left horizontal stabilizer ($\Omega_{_{6,3}}$). This damaged element is split into six more parts, now identified as $\Omega_{_{6,3,1}}$, $\Omega_{_{6,3,2}}$, $\Omega_{_{6,3,3}}$, $\Omega_{_{6,3,4}}$, $\Omega_{_{6,3,5}}$, and $\Omega_{_{6,3,6}}$ in the \autoref{fig:aircraft4}. Now, the identification problem is run with 13 elements. The damage should be now identified in the element $\Omega_{_{6,3,3}}$.
+
+In this iterative process, the structure will be refined until the accuracy of the design model is reached.
+
+\section{Chapter Conclusions}
+
+In this chapter, the VDI was presented as an IP, more specifically as an optimization problem. The damage parameters will be used as the solution vector of the problem. The objective function to be minimized was defined as the square error between the measured data and the data obtained running the computational model of the structure. Some common models will be further discussed in the next chapter.

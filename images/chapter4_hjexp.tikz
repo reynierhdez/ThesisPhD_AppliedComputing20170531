@@ -1,0 +1,39 @@
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node (start) [startstop] {Start};
+\node (in1) [io, right of=start, xshift=4cm] {Input $s^c$};
+
+\node (p0) [process, below of=in1, yshift=-0.3cm]  {$d = 1$, $s = s^c$};
+
+\node (dec1) [decision, below of=p0, yshift=-0.3cm] {\begin{varwidth}{4.5cm} \centering $d  < n$\end{varwidth}};
+
+\node (dec2) [decision, below of=dec1, yshift=-0.5cm] {\begin{varwidth}{4.5cm} \centering $J(s + h v_{_d}) < J(s)$\end{varwidth}};
+
+\node (p1) [process, right of=dec2, xshift=4cm]  {$s = s + h v_{_d}$};
+
+\node (dec3) [decision, below of=dec2, yshift=-1.2cm] {\begin{varwidth}{4.5cm} \centering $J(s - h v_{_d}) < J(s)$\end{varwidth}};
+
+\node (p2) [process, right of=dec3, xshift=4cm]  {$s = s - h v_{_d}$};
+
+\node (out) [io, left of=dec1, xshift=-4cm] {Return $s$};
+\node (stop) [startstop, below of=out] {Stop};
+
+\draw [arrow] (start) -- (in1);
+\draw [arrow] (in1) -- (p0);
+\draw [arrow] (p0) -- (dec1);
+\draw [arrow] (dec1) -- node[anchor=east] {yes} (dec2);
+\draw [arrow] (dec2) -- node[yshift=0.1cm,anchor=east] {no} (dec3);
+\draw [arrow] (dec2) -- node[anchor=south] {yes} (p1);
+\draw [arrow] (dec3) -- node[anchor=south] {yes} (p2);
+
+\draw [arrow] (out) -- (stop);
+
+\draw [arrow] (p1.south) |- ([yshift=0.4cm]dec3.north);
+\draw [arrow] (dec1) -- (out);
+
+% \draw [arrow] (dec1) node[xshift=-2cm,anchor=south] {no} -| ([xshift=-1.71cm]dec1.west) -- ([xshift=-1.35cm, yshift=1cm]out.west) |- ([yshift=0.29cm]out.north) -- (out);
+
+\draw [arrow] (dec3.south) |- ([xshift=0.5cm,yshift=-0.7cm]p2.south east) |- ([yshift=0.4cm]dec1.north);
+\draw [arrow] (p2.south) -- ([yshift=-0.7cm]p2.south) ;
+
+\end{tikzpicture}

@@ -1,0 +1,147 @@
+\chapter{Hybrid Algorithms for solving the Damage Identification problem}
+\label{chp:6}
+\epigraph{\textit{Veni, vidi, vici}}{Gaius Julius Caesar}
+
+In the last chapters was presented the forward model that will be used in the inverse problem. 
+
+This chapter will present the hybrid algorithms that will be used for solving the optimization problem. First, will be presented a classification of the optimization algorithms, as well as the concepts of metaheuristic and hybrid algorithms, and the classification of these methods. Then, all the algorithms used in the solution of the problem will be introduced: Multi-Particle Collision Algorithm, $q$-gradient, Opposition-based Optimization, and Hooke-Jeeve direct search method.
+
+\section{Optimization algorithms}
+
+The choice of an appropriate optimization algorithm depends on the optimization problem. 
+
+\autoref{fig:mono} shows a classification for the mono-objective optimization algorithms \cite{Siarry2016}. Following this classification, optimization algorithms can be distinguish in two main branches: \textbf{combinatorial} or \textbf{continuous}. For combinatorial optimization, exist specialized heuristics that are completely dedicated to the problem, and metaheuristics. For continuous optimization, exists a \textbf{linear} approach (with linear programming), distinguished from the \textbf{nonlinear} case. If there is a low number of local minima, a \textbf{local} method should be used, which may or may not use the gradient for searching the objective function. If a high number of local minima exists, a \textbf{global} method should be used, in which are included the traditional methods and the metaheuristics.
+
+\begin{figure}[H]
+    \caption{Classification of mono-objective optimization algorithms}
+    \label{fig:mono}
+    \centering
+    \includegraphics{images/chapter4_mono.tikz}
+    {\footnotesize SOURCE: Adapted from \cite{Siarry2016}}
+\end{figure}
+
+\subsection{Metaheuristic algorithms}
+
+Stochastic optimization has become an important tool to solve multi-modal optimization problems. Sometimes is hard to compute the gradient of the objective function, or even there is no derivative of such function. Most of the stochastic methods do not need the gradient information, or other internal information of the process/system, to be applied. Stochastic methods use random processes to generate new solutions, and facilitate the \textbf{exploration} (global search) in the search space, at the same time that \textbf{exploitation} (local search) is made by some methods. The entire search space can be visited by generating new randomly candidate solutions, while an intense search is done in the neighborhood of this candidate solution -- this searching can be applied to some selected candidates.
+
+With recent advances in the computer science area, many techniques have been developed in the sub-area of stochastic optimization methods. Those algorithms are called to improve the exploration of the search space, making it more efficient, expectedly converging more quickly to the global optimum.
+
+In \citeonline{wolpert1997no}, with their \textit{No Free Lunch} Theorem, established that \say{for any algorithm, any elevated performance over one class of problems is offset by performance over another class}.
+
+Metaheuristic algorithms are powerful tools within the approximated methods that can solve hard optimization problems that could not be solved by deterministic optimization algorithms in a reasonable time \cite{yang2010nature, lin2012review}.
+
+The term metaheuristic was first used by \citeonline{glover1986future}, and comes from the composition of two Greek words: meta and \textit{heuriskein} . A good definition of metaheuristic is given by \citeonline{osman1996metaheuristics}:
+
+\begin{quote}
+\say{A metaheuristic is formally defined as an iterative generation process which guides a subordinate heuristic by combining intelligently different concepts for exploring and exploiting the search space, learning strategies are used to structure information in order to find efficiently near-optimal solutions.}
+\end{quote}
+
+A huge number of metaheuristics can be found in the literature \cite{du2016search, FisterYFBF13, sorensen2017history}.
+
+The two main features of the metaheuristic algorithms are the \textbf{intensification}, also called exploitation, and the \textbf{diversification}, also called exploration. The exploration phase is responsible for efficiently exploring the search space, while the exploitation phase searches within the current best solutions neighborhood, and selects the best solutions \cite{blum2003metaheuristics,gandomi2013metaheuristic,Yang2014}.
+
+\citeonline{blum2003metaheuristics} summarize some fundamental properties which characterize metaheuristics:
+
+%\begin{quotation}
+\begin{itemize}
+\item \say{Metaheuristics are strategies that \say{guide} the search process.}
+\item \say{The goal is to efficiently explore the search space in order to find (near-) optimal solutions.}
+\item \say{Techniques which constitute metaheuristic algorithms range from simple local search procedures to complex learning processes.}
+\item \say{Metaheuristic algorithms are approximate and usually non-deterministic.}
+\item \say{They may incorporate mechanisms to avoid getting trapped in confined areas of the search space.}
+\item \say{The basic concepts of metaheuristics permit an abstract level description.}
+\item \say{Metaheuristics are not problem-specific.}
+\item \say{Metaheuristics may make use of domain-specific knowledge in the form of heuristics that are controlled by the upper level strategy.}
+\item \say{Todays more advanced metaheuristics use search experience (embodied in some form of memory) to guide the search.}
+\end{itemize}
+%\end{quotation}
+
+Meta-heuristics can be classified in different ways. Among these methods, there are two main categories:
+
+\begin{description}[style=sameline]
+    \item[Single-solution] does the search by using only one solution at time; and
+    \item[Population-based] uses a set of solutions for exploiting the search space.
+\end{description}
+
+Other classification attends their inspiration:
+
+\begin{description}[style=sameline]
+    \item[Evolution] Evolutionary Programming (EP) \cite{Fogel:1999:ITS:317034}, Evolution Strategies (ES) \cite{beyer2013theory}, Genetic Algorithms (GA) \cite{Holland:1992:ANA:129194}, Genetic Programming (GP) \cite{langdon:2010:GPEM}, Differential Evolution (DE) \cite{das2011differential}, Cultural Algorithms (CA) \cite{reynolds1994introduction}, and Biogeography-Based Optimization (BBO) \cite{simon2008biogeography};
+    \item[Swarm intelligence] Particle Swarm Optimization (PSO) \cite{eberhart1995new,kennedy2010particle}, Ant Colony Optimization (ACO) \cite{dorigo2010ant,dorigo2006ant}, Artificial Bee Optimization (ABC) \cite{karaboga2007powerful}, Bacterial foraging optimization (BFO) \cite{das2009bacterial}, Intelligent Water Drops (IWS) \cite{shah2009intelligent}, and Artificial Immune Systems (AIS) \cite{de2002artificial};
+    \item[Human-based] Memetic Algorithms (MA) \cite{Moscato89onevolution}, and Harmony search (HS) \cite{geem2001new}.
+    \item[Sciences-based] Simulated Annealing (SA) \cite{kirkpatrick1983optimization}, Particle Collision Algorithm (PCA) \cite{sacco2005new} and Multi-Particle Collision Algorithm (MPCA) \cite{da2008new}.
+    \item[Not inspired in nature] Local Search (LS), Greedy Heuristic (GH), Simulated Annealing (SA), Tabu Search (TS), and Iterated Local Search (ILS).
+\end{description}
+
+\subsection{Hybrid algorithms}
+
+Hybrid metaheuristics are methods that combine a metaheuristic with other optimization approaches, such as exact methods \cite{jourdan2009hybridizing}, algorithms from mathematical programming, constraint programming, machine learning, or even artificial intelligence \cite{raidl2006unified, raidl2010metaheuristic}.
+
+This cooperation can be in an easy way, where the local method refines the solution obtained from the metaheuristic. Also, a more complex way of hybrid algorithms can be found, in which the single methods are intermingled.
+
+Hybridizing different algorithmic concepts allows obtaining a better performance, exploiting and combining the advantages of single strategies \cite{Blum2010}.
+
+Hybrid algorithms can be classified into two main types \cite{talbi2002taxonomy, jourdan2009hybridizing}: \textbf{low-level}, with a functional composition, where a given function of a metaheuristic is replaced by another method or \textbf{high-level}: there are no composition of the  different algorithms, retaining their own identities; and working as a \textbf{relay}, where one algorithm takes as its inputs the output of the previous algorithms, working in series, like a pipeline, or a \textbf{teamwork}, using cooperative optimization models.
+
+Another classification was presented by \citeonline{talbi2002taxonomy}, where divided the hybrid algorithm in \textbf{homogeneous}, when all the combined algorithms use the same metaheuristic, or \textbf{heterogeneous}, in which different metaheuristics are used; and \textbf{global}, with all the algorithms searching in the whole search space, or \textbf{partial}, when the problem is divided into sub-spaces, and the algorithms perform the search in its search space; and \textbf{general}, when all the algorithms solve the same optimization problem, or \textbf{specialist}, when each algorithm solve a different problem.
+
+A new classification was made by \citeonline{ting2015}, separating the hybrid algorithms into two groups according to their taxonomy:
+\vspace{1em}
+%
+\begin{itemize}
+    \item Collaborative hybrids combine two or more algorithms that could work in three ways:
+    \vspace{1em}
+    \begin{itemize}
+        \item Multi-stage, combining two stages: a global search followed by a local search;
+        \item Sequential, running both algorithms alternatively until a stopping criterion is met; or,
+        \item Parallel, where the algorithms run simultaneously over the same population.
+    \end{itemize}
+    \item Integrative hybrids, where a master algorithm has other algorithm embedded working in two possible ways:
+    \vspace{1em}
+    %
+    \begin{itemize}
+        \item with a full manipulation of the population at every iteration, or
+        \item with the manipulation of a portion of the population.
+    \end{itemize}
+\end{itemize}
+
+\input{docs/chapter4_mpca.tex}
+
+\input{docs/chapter4_obl.tex}
+
+\input{docs/chapter4_qg.tex}
+
+\input{docs/chapter4_hj.tex}
+
+\subsection{OMPCA-HJ and qG-HJ}
+
+The hybrid algorithms Multi-Particle Collision Algorithm with Hooke-Jeeves (MPCA-HJ) and its variants use an integration scheme of the MPCA and Opposition (OMPCA-HJ), for improving the global search stage. The first phase of exploration is followed by an intensification stage performed by HJ.
+
+Similarly, the $q$-gradient method with Hooke-Jeeves ($q$G-HJ) uses the same approach of the MPCA-HJ, with an exploration phase with $q$G and an exploitation phase with HJ.
+
+\autoref{fig:hybrids} presents the operating flow of both hybrid algorithms.
+
+\begin{figure}[H]%
+\caption[Operating flow of the hybrid algorithms]{Operating flow of the hybrid algorithms: \subref{fig:mpcahj} OMPCA-HJ; \subref{fig:qghj} $q$G-HJ;}%
+\label{fig:hybrids}%
+\vspace{1em}
+\centering
+\subfigure[][]{%
+\label{fig:mpcahj}%
+\begin{minipage}{0.45\textwidth}
+\centering
+\scalebox{0.8}{
+\includegraphics{images/chapter4_mpcahj.tikz}}%
+\end{minipage}}
+\hspace{8pt}%
+\subfigure[][]{%
+\label{fig:qghj}%
+\begin{minipage}{0.45\textwidth}
+\centering
+\scalebox{0.8}{
+\includegraphics{images/chapter4_qghj.tikz}}
+\end{minipage}}%
+\end{figure}
+
+\section{Chapter conclusions}
+

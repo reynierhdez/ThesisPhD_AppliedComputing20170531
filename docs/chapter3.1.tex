@@ -1,0 +1,720 @@
+\chapter{Transient response analysis of structures as direct model}
+\label{chp:4}
+\epigraph{All models are wrong, but some are useful.}{George E. P. Box}
+
+In the previous chapter, it was presented that the VDI will be solved as an optimization problem that uses data obtained through structural models.
+
+In this chapter, is presented the direct model used to obtain the transient response analysis of structures. First, the transient response of a structure will be defined, and classified into the direct and the modal categories. The mathematical definition, and the numerical solution of both methods will be summarized. Then, the Finite Element Method will be introduced, and how it is applied in computing the model of systems with springs, and structures with bars and beams.
+
+\section{Transient response analysis}
+
+In the transient analysis, a response to a time-varying input is computed. The excitation is defined in the time domain, and the responses, such as nodal displacements and accelerations, are a function of time.
+
+There are two categories of transient response analysis:
+
+\begin{description}[style=sameline]
+    \item [Direct transient response] carries out a numerical integration on the complete equation of motion, and
+    \item[Modal transient response] uses some mode shapes, reducing the problem size. Uncouple the equations when no damping or only modal damping is used on the model.
+\end{description}
+
+Both methods will be detailed in the next sections.
+
+\subsection{Direct transient response}
+\label{sec:str}
+
+The dynamic response of motion under kinematic excitation is shown in \autoref{eq:dynamic}:
+
+\begin{equation}
+\label{eq:dynamic}
+{M}\ddot{u}(t) + {C}\dot{u}(t) + {K} {u}(t) = {F}(t)\,.
+\end{equation}
+
+In the equation, $M$, $C$ and $K$ represent the mass, viscous damping and stiffness matrices, respectively. $F$ and $u$ are the external force and the displacement vectors, respectively. The initial conditions for the model are given by \Autoref{eq:ic1,eq:ic2}.
+%
+\begin{eqnarray}
+\label{eq:ic1}
+u(0) &=& u_{_0};\\
+\label{eq:ic2}
+\dot{u}(0) &=& \dot{u}_{_0}.
+\end{eqnarray}
+
+The term ${M}\ddot{u}(t)$ is the inertia force, proportional to the acceleration and the mass.
+
+The energy dissipation mechanism induces a force, called viscous damping force, proportional to the dissipation constant and the velocity (${C}\dot{u}(t)$). The kinetic energy is transformed into other forms of energy, reducing the vibration.
+
+The elastic force (${K} {u}(t)$) is induced due to the elastic resistance of the system, and is proportional to the stiffness and the displacement of the system.
+
+The numerical solution for this model is obtained using the Newmark method \cite{newmark1959method} since no analytical solution exists for any arbitrary functions of $M$, $C$, $K$ and $F$.
+
+The equation of motion is approximated by a central finite difference representation. The velocity and the acceleration for the $k$-th time step are given by:
+%
+\begin{align}
+    \dot{u}_k &= \dfrac{1}{2\Delta t} \left( u_{k+1} - u_{k-1} \right) \\
+    \ddot{u}_k &= \dfrac{1}{\Delta t^2} \left( u_{k+1} - 2 u_n + u_{k-1} \right)
+\end{align}
+%
+respectively.
+
+The equation of motion over three adjacent time points can be reformulated as follow:
+%
+\begin{multline}
+    \dfrac{M}{\Delta t^2} \left( u_{k+1} - 2 u_k + u_{k-1} \right) + \dfrac{B}{2\Delta t} \left( u_{k+1} - u_{k-1} \right)  + \dfrac{K}{3} \left( u_{k+1} + u_k + u_{k-1} \right) \\
+    = \dfrac{1}{3} \left( F_{k+1} + F_k + F_{k-1} \right)
+\end{multline}
+
+Regrouping the terms, the following equation is obtained:
+%
+\begin{equation}
+    A_1 u_{k+1} = A_2 + A_3 u_k + A_4 u_{k-1}
+\end{equation}
+%
+in which
+%
+\begin{align}
+    A_1 &= \dfrac{M}{\Delta t^2} + \dfrac{B}{2\Delta t} + \dfrac{K}{3} \\
+    A_2 &= \dfrac{1}{3} \left( F_{k+1} + F_k + F_{k-1} \right)\\
+    A_3 &= \dfrac{2M}{\Delta t^2} - \dfrac{K}{3} \\
+    A_4 &= -\dfrac{M}{\Delta t^2} + \dfrac{B}{2\Delta t} - \dfrac{K}{3}
+\end{align}
+
+By decomposition of $A_1$ and transfer on the right side, the transient solution displacement is obtained. It is recommended to keep $\Delta t$ fixed, to avoid additional decomposition of $A_1$.
+
+\subsection{Modal transient response}
+
+For obtaining the modal transient response, first the variables are transformed from physical coordinates to modal coordinates:
+%
+\begin{equation}
+\label{eq:transformation}
+u(t) = \Phi \xi(t)
+\end{equation}
+
+Substituting \autoref{eq:transformation} into \autoref{eq:dynamicsubs}.
+%
+\begin{equation}
+\label{eq:dynamicsubs}
+{M}\Phi \ddot{\mathbf{\xi}}(t) + {C}\Phi \dot{\mathbf{\xi}}(t) + {K} \Phi{\mathbf{\xi}}(t) = {F}(t)\,.
+\end{equation}
+%
+and multiplying the equation by $\Phi^\intercal$, is obtained:
+%
+\begin{equation}
+\label{eq:dynamicpre}
+\Phi^\intercal{M}\Phi \ddot{\mathbf{\xi}}(t) + \Phi^\intercal{C}\Phi \dot{\mathbf{\xi}}(t) + \Phi^\intercal{K} \Phi{\mathbf{\xi}}(t) = \Phi^\intercal{F}(t)\,.
+\end{equation}
+%
+where $\Phi^\intercal{M}\Phi$ is the modal mass matrix, $\Phi^\intercal{C}\Phi$ is the modal damping matrix, $\Phi^\intercal{K}\Phi$ is the modal stiffness matrix, and $\Phi^\intercal{F}(t)$ is the modal force vector.
+
+Writing the dynamic equation as a decoupled system, is obtained:
+%
+\begin{equation}
+\ddot{\mathbf{\xi}}_k(t) + 2 \zeta_k \omega_k \dot{\mathbf{\xi}}_k(t) + \omega_k^2 {\mathbf{\xi}}_k(t) = N_k(t)
+\end{equation}
+%
+where ${\mathbf{\xi}}_k$ is the $k$-th modal coordinate, $\omega_k$ is the $k$-th modal frequency, $\zeta_k$ is the $k$-th modal damping ratio, and $N_k$ is the $k$-th modal force.
+
+The coupled equations are then solved by the same method used in the \autoref{sec:str}, obtaining:
+%
+\begin{equation}
+    A_1 \xi_{k+1} = A_2 + A_3 \xi_k + A_4 \xi_{k-1}
+\end{equation}
+%
+in which
+%
+\begin{align}
+    A_1 &= \Phi^\intercal \left[ \dfrac{M}{\Delta t^2} + \dfrac{B}{2\Delta t} + \dfrac{K}{3} \right] \Phi \\
+    A_2 &= \dfrac{1}{3} \Phi^\intercal \left( F_{n+1} + F_n + F_{n-1} \right)\\
+    A_3 &= \Phi^\intercal \left[ \dfrac{2M}{\Delta t^2} - \dfrac{K}{3} \right] \Phi\\
+    A_4 &= \Phi^\intercal \left[ -\dfrac{M}{\Delta t^2} + \dfrac{B}{2\Delta t} - \dfrac{K}{3} \right] \Phi
+\end{align}
+
+For the recovery of the physical response, the summation of the modal response is done:
+%
+\begin{align}
+ u = \Phi \xi \\
+ \dot{u} = \Phi \dot{\xi} \\
+ w = \phi_w u
+\end{align}
+%
+where $w$ is a vector of internal forces, and $\phi_w$ is a transformation matrix.
+
+\subsection{Modal Versus Direct Transient Response}
+
+For selecting modal versus transient response analysis, there are some guidelines to be used \cite{nastran2004basic}, that are summarized in \autoref{tab:modalvsdirect}.
+
+\begin{table}[htbp]
+    \caption{Modal versus direct transient response \cite{nastran2004basic}}
+    \label{tab:modalvsdirect}
+    \centering
+    \begin{tabular}{lcc}
+        \hline
+        & Modal & Direct\\
+        \hline
+        Small Model & & \checkmark\\
+        Large Model & \checkmark &\\
+        Few Time Steps & & \checkmark \\
+        Many Time Steps & \checkmark &\\
+        High Frequency Excitation & & \checkmark\\
+        Normal Damping & & \checkmark\\
+        Higher Accuracy & & \checkmark\\
+        Nonlinearities & & \checkmark\\
+        Initial conditions & \checkmark & \checkmark\\
+        \hline
+    \end{tabular}
+\end{table}
+
+Large models are commonly solved more efficiently when using modal transient response. In this type of analysis, the problem is typically reduced in modal space. In addition, a modal transient response analysis is recommended when no damping or only modal damping is used. In these cases, the main computational effort is to calculate the modes. If the model is larger, it will require the calculation of a large number of modes, and the analysis could be as intensive as a direct transient response analysis, computationally speaking. In model with a fewer number of time steps, the direct transient response should be the most efficient because the equations are solved without computing the modes. Finally, the direct method is more accurate than the modal method, since is not concerned with mode truncation \cite{nastran2004basic}.
+
+\section{Finite Element Method}
+
+The Finite Element Method (FEM) or Finite Element Analysis (FEA) is a numerical method for investigating the behaviour of structures. The principal concepts in FEM  \cite{logan2011first,felippa2004introduction} will be introduced below.
+
+FEM breaks the structures into smaller simpler pieces called elements. The finite elements are connected to each other at nodes. The finite element model is the assembly of all elements and nodes in the structure.
+
+FEM consists of three main steps \cite{moaveni2008finite}, shown in \autoref{fig:fem}, and detailed as follow:
+
+\textbf{Preprocessing}
+\vspace{0.5em}
+\begin{enumerate}[label=(\roman*)]
+\item create the solution domain and discretize into finite elements, creating nodes and elements;
+\item represent the physical behaviour using a shape function;
+\item develop equations for the elements;
+\item assemble the elements equations to create the global stiffness matrix;
+\item apply boundary conditions, initial conditions, and loading;
+\end{enumerate}
+\textbf{Finite Element Solution}
+\vspace{0.5em}
+\begin{enumerate}[label=(\roman*)]
+\setcounter{enumi}{5}
+\item solve the equations system to obtain the results for each node;
+\end{enumerate}
+\textbf{Postprocessing}
+\vspace{0.5em}
+\begin{enumerate}[label=(\roman*)]
+\setcounter{enumi}{6}
+\item obtain other information using the results from the analysis.
+\end{enumerate}
+
+\begin{figure}[H]
+    \caption{Finite Element Method (FEM)}
+    \label{fig:fem}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_nastranprepos.tikz}
+\end{figure}
+
+Elements can have have different shapes, with intrinsic dimensionality of one (1D), two (2D), or three dimensions (3D). There are also special elements with zero dimensions (0D). Some basic types of finite elements are shown in \autoref{tab:types}.
+
+The intrinsic dimensionality can be expanded as well. For example, a 1D element, such as a bar, can be used to build a model in 2D or 3D.
+
+\begin{table}[htbp]
+    \caption{Types of elements}
+    \label{tab:types}
+    \centering
+    \footnotesize
+    \begin{tabular}{cccc}
+        \hline
+        Dimension & Element type & Use & Example \\
+        \hline
+        \multirow{2}{*}{0D} & Point masses & \multirow{2}{*}{Concentrated mass or weights} & \multirow{2}{*}{Brackets, pins or screws}\\
+        & Lumped springs & & \\
+        \multirow{2}{*}{1D} & Bars & \multirow{2}{*}{\makecell{Long and slender \\ structural members}} & \multirow{2}{*}{Communication towers} \\
+        & Beams & & \\
+        2D & Plates & Thin structural members & Aircraft fuselage skin \\
+        3D & Solids & Thick components & Piston head \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Each element has points called \textbf{nodal points} or \textbf{nodes}. The nodes are used for defining the element geometry, and for placing of \textbf{degrees of freedom} (DOF). The geometry of an element is defined by the placement of the geometric nodes. DOFs are the values of a primary field variable, or independent directions, at connection nodes.
+
+Each node can move in six DOF, as shown in \autoref{fig:dof}. The displacement vector $u = \begin{bmatrix} u_x & \phi_x & u_y & \phi_y & u_z & \phi_z         \end{bmatrix}^\intercal$, where $u_x$, $u_y$, and $u_z$ are translations, and $\phi_x$, $\phi_y$, and $\phi_z$ are rotations.
+
+\begin{figure}[!htbp]
+    \caption{Degrees of freedom}
+    \label{fig:dof}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_dof.tikz}
+\end{figure}
+
+\subsection{Stiffness matrix}
+
+The elemental stiffness matrix $K^{(e)}$ is a matrix such that:
+%
+\begin{equation}
+    f^{(e)} = K^{(e)} u^{(e)}
+\end{equation}
+
+in which $f^{(e)}$ are the nodal forces and $u^{(e)}$ are the nodal displacements of a single element, like a spring.
+
+\section{Spring element}
+
+The spring elements, like that is show in the \autoref{fig:spring}, are commonly used to model connectors and interfaces. In a single spring element, there are two nodes, with one single DOF per node, resulting in two DOFs. The element have two nodal displacements ($u_1, u_2$), and two nodal forces ($f_{1x}, f_{2x}$).
+
+\begin{figure}[!htbp]
+    \caption{Spring element}
+    \label{fig:spring}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_spring.tikz}
+\end{figure}
+
+% \begin{equation}
+%     \begin{Bmatrix} f_{1x} \\ f_{2x} \end{Bmatrix} = \begin{bmatrix} k_{11} & k_{12} \\ k_{21} & k_{22} \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix}
+% \end{equation}
+
+Since there are two degrees of freedom associated with the spring element, a linear displacement function $u$ along the $x$-axis is assumed:
+%
+\begin{equation}
+\label{eq:u}
+    u = a_1 + a_2 x
+\end{equation}
+%
+where $a_1$ and $a_2$ are integration constants. Evaluating $u$ at each node, and solving for $a_1$ and $a_2$:
+%
+\begin{align}
+\label{eq:a1}
+    u(0) &= u_1 = a_1 \\
+    u(\ell) &= u_2 = a_2 \ell + u_1
+\end{align}
+%
+and
+%
+\begin{equation}
+\label{eq:a2}
+    a_2 = \dfrac{u_2 - u_1}{\ell}
+\end{equation}
+
+Therefore, substituting \Autoref{eq:a1,eq:a2} in \autoref{eq:u}
+%
+\begin{align}
+    u &= \left( \dfrac{u_2 - u_1}{\ell} \right)x + u_1 \\
+    u &= \begin{bmatrix} 1 - \dfrac{x}{\ell} & \dfrac{x}{\ell}  \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix} \\
+    u &= \begin{bmatrix} N_1 & N_2 \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix}
+\end{align}
+%
+where $N_1 = 1 - \dfrac{x}{\ell}$ and $N_2 = \dfrac{x}{\ell}$ are called shape functions.
+
+The tensile forces $T$ produce a deformation $\delta$ of the spring, represented by:
+%
+\begin{equation}
+    \delta = u(L) - u(0) = u_2 - u_1
+\end{equation}
+
+The stress/strain relationship is expressed in terms of the force/deformation relationship:
+%
+\begin{equation}
+    T = k \delta = k(u_2 - u_1)
+\end{equation}
+
+Using the sign convention for nodal forces and equilibrium:
+%
+\begin{align}
+    f_{1x} &= -T \\
+    f_{2x} &= T
+\end{align}
+%
+and
+%
+\begin{align}
+    f_{1x} &= k(u_1 - u_2) \\
+    f_{2x} &= k(u_2 - u_1)
+\end{align}
+
+In matrix form:
+%
+\begin{equation}
+    \begin{Bmatrix} f_{1x} \\ f_{2x} \end{Bmatrix} = \begin{bmatrix} k & -k \\ -k & k \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix}
+\end{equation}
+%
+The local stiffness matrix for the element $e$ is:
+%
+\begin{equation}
+    K^{(e)} = \begin{bmatrix} k & -k \\ -k & k \end{bmatrix}
+\end{equation}
+
+For a continuous structure, the stiffness matrices $K^{(e)}$ and the force vectors $f^{(e)}$ of each element are assembled to form the global stiffness matrix $K$ and $f$: 
+%
+\begin{align}
+    K &= \sum_{e=1}^n K^{(e)}\\
+    f &= \sum_{e=1}^n f^{(e)} \;.
+\end{align}
+%
+
+Then, the global stiffness matrix $K$ relates global-coordinate $(x,y,z)$ nodal displacements to global load vector $f$, as show in \autoref{eq:fKu}.
+%
+\begin{equation}
+\label{eq:fKu}
+    f = K u
+\end{equation}
+
+The finite element model can be constrained by means of the boundary conditions. In practice, those rows and columns that correspond to the constrained DOF in the global matrix are removed.
+
+\section{Trusses}
+
+A truss is a structure composed by slender members connected at their ends by means of bolts, rivets, pins or welding. Metal bars or wooden struts are member that can be found in trusses \cite{moaveni2008finite,hibbeler2010engineering}.
+
+%https://books.google.com.br/books?hl=es&lr=&id=Lvr61msQz2oC&oi=fnd&pg=PR27&dq=+Engineering+Mechanics:+Statics+12&ots=9f_ZpJWQW3&sig=AaU6aZFUm9o9amkvVTN8RYdFQVo&redir_esc=y#v=onepage&q=Engineering%20Mechanics%3A%20Statics%2012&f=false
+
+In particular, a \textbf{plane truss} is a truss whose members lie in a single plane. The forces act also in this single plane. In trusses, two-force members are considered. In two-force members force is applied to only two points, and the internal forces act in equal and opposite directions along the members.
+
+\subsection{Bar element}
+
+Bars are structural components characterized by having one preferred dimension, and by resisting an internal axial force along its longitudinal dimension. The \textbf{longitudinal dimension} or \textbf{axial dimension} is much larger than the other two dimensions, known as transverse dimensions, as shown in the \autoref{fig:bar}.
+
+\begin{figure}[H]
+    \centering
+    \caption{Bar element}
+    \label{fig:bar}
+    \vspace{0.5em}
+    \begin{tikzpicture}
+        \node [cylinder, black, rotate=200, draw, minimum height=4cm, minimum width=0.5cm, aspect=1.5] (c) {};
+    \end{tikzpicture}
+\end{figure}
+
+The model of a bar element shown in \autoref{fig:barelement}. It is considered linear-elastic, and constant cross-sectional area (prismatic). The bar element has a constant cross-section $A$, length $\ell$, and a modulus of elasticity $E$ (also known as Young's modulus). The nodal degrees of freedom are the local axial displacements $u_1$ and $u_2$ at the ends of the bar. $T$ is the tensile force directed along the axis at nodes 1 and 2, and $x$ is the local coordinate system directed along the length of the bar.
+
+\begin{figure}[H]
+    \caption{Representation of a bar element}
+    \label{fig:barelement}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_bar.tikz}
+\end{figure}
+
+Assuming that the material of the bar is linearly elastic and obeys the Hooke's law, and that the strain/displacement are infinitesimal, their relationship can be expressed as:
+%
+\begin{align}
+    \sigma_x &= E \epsilon_x \\
+    \epsilon_x &= \dfrac{du}{dx}
+\end{align}
+
+where $\sigma_x$ is the axial stress, and $\epsilon_x$ is the axial strain.
+
+From force equilibrium, $A \sigma_x = T = constant$.
+
+Combining the equations above, and differentiating with respect to $x$, the following differential equation governing the linear-static bar behaviour can be obtained:
+
+\begin{equation}
+    \dfrac{d}{dx} \left(AE \dfrac{du}{dx}\right) = 0
+\end{equation}
+
+The bar element stiffness matrix can be derived considering the following assumptions:
+
+\begin{enumerate}
+    \item The bar can not sustain shear force: $f_{1y} = f_{2y} = 0$.
+    \item Any effect of transverse displacement is ignored.
+    \item Hooke’s law applies; stress is related to strain: $\sigma_x = E \epsilon_x$
+\end{enumerate}
+
+There are two degrees of freedom associated with the bar element. Thus, a linear displacement function $u$ is assumed: $u = a_1 + a_2 x$.
+
+Applying the boundary conditions and solving for the unknown coefficients, is obtained that:
+%
+\begin{equation}
+    u = \dfrac{u_2 - u_1}{\ell} x + u_1
+\end{equation}
+
+Or, in a matrix representation:
+%
+\begin{align}
+    u &= \begin{bmatrix} 1 - \dfrac{x}{\ell} & \dfrac{x}{\ell}  \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix} \\
+    u &= \begin{bmatrix} N_1 & N_2 \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix}
+\end{align}
+
+The stress-displacement relationship is:
+%
+\begin{equation}
+    \epsilon_x = \dfrac{du}{dx} = \dfrac{u_2 - u_1}{\ell}
+\end{equation}
+
+The stiffness matrix of the bar element can be derived as follows:
+%
+\begin{equation}
+    T = A \sigma_x = AE\dfrac{u_2 - u_1}{\ell}
+\end{equation}
+
+The nodal force sign convention defined is:
+%
+\begin{align}
+    f_{1x} &= -T \\
+    f_{2x} &= T
+\end{align}
+
+therefore,
+%
+\begin{align}
+    f_{1x} &= AE\dfrac{u_1 - u_2}{\ell} \\
+    f_{2x} &= AE\dfrac{u_2 - u_1}{\ell}
+\end{align}
+
+In matrix form:
+%
+\begin{equation}
+    \begin{Bmatrix} f_{1x} \\ f_{2x} \end{Bmatrix} = \dfrac{AE}{\ell} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix} \begin{Bmatrix} u_1 \\ u_2 \end{Bmatrix}
+\end{equation}
+
+The term $AE/\ell$ is analogous to the spring constant $k$ for a spring element.
+
+The global stiffness matrix $K$ and the global force vector $f$ are assembled using the nodal force equilibrium equations, and force/deformation and compatibility equations:
+%
+\begin{align}
+    K &= \sum_{e=1}^n K^{(e)}\\
+    f &= \sum_{e=1}^n f^{(e)}
+\end{align}
+%
+
+The elemental mass matrix is computed as:
+%
+\begin{equation}
+    M^{(e)} = \dfrac{\rho A \ell}{6} \begin{bmatrix} 2 & 1 \\ 1 & 2\end{bmatrix}
+\end{equation}
+%
+where $\rho$ is the density of the member.
+
+\subsubsection{Transformation into global coordinates}
+
+A planar/spatial truss structure can be modeled using bar elements with two or three degrees of freedom at each node.
+
+The associated matrices can be transformed into global coordinates. using the following relations:
+%
+\begin{align}
+    K &= T^\intercal K T\\
+    M &= T^\intercal M T
+\end{align}
+%
+where $T$ is the transformation matrix.
+
+For a planar truss,
+%
+\begin{equation}
+    T = \begin{bmatrix} c & -s & 0 & 0 \\ s & c & 0 & 0 \\ 0 & 0 & c & -s \\ 0 & 0 & s & c \end{bmatrix}
+\end{equation}
+
+in which $c = \cos \theta$ and $s = \sin \theta$, being $\theta$ the angle between the element and the global $x$-axis, as shown in \autoref{fig:coordinate}.
+
+% For spatial truss,
+% %
+% \begin{equation}
+%     T = \begin{bmatrix} \xi_1 & \xi_2 & \xi_3 & 0 & 0 & 0 \\ \eta_1 & \eta_2 & \eta_3 & 0 & 0 & 0 \\ \zeta_1 & \zeta_2 & \zeta_3 & 0 & 0 & 0 \\ 0 & 0 & 0 & \xi_1 & \xi_2 & \xi_3 \\ 0 & 0 & 0 & \eta_1 & \eta_2 & \eta_3 \\ 0 & 0 & 0 & \zeta_1 & \zeta_2 & \zeta_3 \end{bmatrix}
+% \end{equation}
+% %
+% where $\left\{ \xi_1, \eta_1, \zeta_1 \right\}$, $\left\{ \xi_2, \eta_2, \zeta_2 \right\}$, $\left\{ \xi_3, \eta_3, \zeta_3 \right\}$ are the direction cosines of the global $x$, $y$ and $z$-axes with respect to local $xyz$ coordinate system, respectively.
+
+The new coordinate $u'$ is represented in \autoref{fig:coordinate}, and calculated as:
+%
+\begin{equation}
+    u' = cu + sv
+\end{equation}
+
+\begin{figure}[H]
+    \caption{Global coordinates}
+    \label{fig:coordinate}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_global.tikz}
+\end{figure}
+
+The nodal forces are then calculated as:
+%
+\begin{equation}
+    \begin{Bmatrix} f'_{1x} \\ f'_{2x} \end{Bmatrix} = \dfrac{AE}{\ell} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix} \begin{Bmatrix} u'_1 \\ u'_2 \end{Bmatrix}
+\end{equation}
+
+The elemental stiffness matrix for a bar that is arbitrarily oriented in the $x-y$ plane, is expressed as follows:
+%
+\begin{equation}
+    K^{(e)} = \dfrac{AE}{\ell} \begin{bmatrix} c^2 & cs & c^2 & cs \\ cs & s^2 & cs & s^2 \\ c^2 & cs & c^2 & cs \\ cs & s^2 & cs & s^2\\ \end{bmatrix}
+\end{equation}
+
+The elemental mass in the global reference system is defined as:
+
+\begin{equation}
+    M^{(e)} = \dfrac{\rho A \ell}{6} \begin{bmatrix} 2 & 0 & 1 & 0 \\ 0 & 2 & 0 & 1 \\ 1 & 0 & 2 & 0 \\ 0 & 1 & 0 & 2\\ \end{bmatrix}
+\end{equation}
+
+\subsection{Beam element}
+\label{sec:beam}
+
+Beams are a simple but common type of structural component. They are used mostly in Civil and Mechanical Engineering. These structural members have the main function of supporting transverse loading and carry it to the supports. Their shape is bar-like, being one dimension larger than the others, and they deform only in the directions perpendicular to the $x$-axis. \autoref{fig:examplesbeam} shows examples of different types of beams.
+
+\begin{figure}[H]%
+\centering
+\caption[INPE satellites]{Examples of different types of beams:
+\subref{fig:widebeam} American wide flange beam;
+\subref{fig:rectangularbeam} Rectangular hollow section;
+\subref{fig:circularbeam} Circular hollow section (pipe)}%
+\label{fig:examplesbeam}%
+\vspace{1em}
+\subfigure[]{%
+\label{fig:widebeam}%
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics{images/chapter3.1_widebeam.tikz}
+\end{minipage}}
+%
+\subfigure[]{%
+\label{fig:rectangularbeam}%
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics{images/chapter3.1_rectangularbeam.tikz}
+\end{minipage}}
+%
+\subfigure[]{%
+\centering
+\label{fig:circularbeam}%
+\begin{minipage}{0.3\textwidth}
+\centering
+\includegraphics{images/chapter3.1_circularbeam.tikz} 
+\end{minipage}}%
+\end{figure}
+ 
+The experiments will be performed on a plane beam. This type of beam resists primarily transverse loading on a preferred longitudinal plane.
+
+A planar beam finite element is obtained by subdividing beam members longitudinally. This type of element have two nodes (1 and 2), with two degrees of freedom at each node: deflection in the $y$ axis, $u$, and rotation in the $x-y$ plane $\phi = du(x)/dx$.  At the left node, the degrees of freedom are called $u_1$, $\phi_1$, and at the right node, are called $u_2, \phi_2$. At an arbitrary location $x$, the vertical displacement is called $u(x)$ and the rotation is called $\phi(x)$.
+
+\begin{figure}[H]
+    \caption{Beam element}
+    \label{fig:beamelement}
+    \centering
+    \vspace{1em}
+    \includegraphics{images/chapter3_beam.tikz}
+\end{figure}
+
+% The node displacement vector in the element is defined as:
+
+% \begin{equation}
+%     u^{\textit{e}}= \begin{bmatrix} u_1 & \phi_1 & u_2 & \phi_2 \end{bmatrix}
+% \end{equation}
+
+There are four shape functions, one of each DOF for a beam element. In order to obtain them, the transverse displacement function $u$ is assumed:
+%
+\begin{equation}
+    u = a_1x^3 + a_2x^2 + a_3x + a_4
+\end{equation}
+
+where $a_1$, $a_2$, $a_3$ and $a_4$ are integration constants.
+
+There are four coefficients in the displacement function, corresponding to the total number of DOF associated to the beam element.
+
+% http://www.ce.memphis.edu/7117/notes/presentations/chapter_04a.pdf
+% http://12000.org/my_notes/stiffness_matrix/stiffness_matrix_report.htm
+
+The boundary conditions are:
+%
+\begin{align}
+u(x = 0) &= u_1\\
+u(x = \ell) &= u_2\\
+\frac{du}{dx}\Big|_{x=0} &= \phi_1\\
+\frac{du}{dx}\Big|_{x=\ell} &= \phi_2
+\end{align}
+
+Applying the boundary conditions and solving for the unknown coefficients:
+%
+\begin{align}
+u(x = 0) &= u_1 = a_4\\
+u(x = \ell) &= u_2 = a_1\ell^3 + a_2\ell^2 + a_3\ell + a_4\\
+\frac{du}{dx}\Big|_{x=0} &= \phi_1 = a_3\\
+\frac{du}{dx}\Big|_{x=\ell} &= \phi_2 = 3a_1\ell^2 + 2a_2\ell + a_3
+\end{align}
+
+Then, solving the equations for $a_1$, $a_2$, $a_3$ and $a_4$, is obtained:
+%
+\begin{equation}
+    u = \underbrace{
+\left[ \frac{2}{\ell^3}(u_1 - u_2) + \frac{1}{\ell^2}(\phi_1 + \phi_2)\right]}_{a_1} x^3 + 
+    \underbrace{\left[ -\frac{3}{\ell^2}(u_1 - u_2) - \frac{1}{\ell}(2\phi_1 + \phi_2)\right]}_{a_2} x^2 + \underbrace{\phi_1}_{a_3}x  + \underbrace{u_1}_{a_4}
+\end{equation}
+
+In matrix form, this equation is expressed as:
+%
+\begin{equation}
+    u = N u
+\end{equation}
+%
+where $N = \begin{bmatrix} N_1 & N_2 & N_3 & N_4 \end{bmatrix}$ and $u = \begin{bmatrix} u_1 & \phi_1 & u_2 & \phi_2 \end{bmatrix}^\intercal$
+%
+\begin{align}
+ N_1 &= \frac{1}{\ell^3}\left( 2x^3 - 3x^2\ell + \ell^3\right)\\
+ N_2 &= \frac{1}{\ell^3}\left( x^3\ell - 
+2x^2\ell^2 + x\ell^3\right)\\
+ N_3 &= \frac{1}{\ell^3}\left( -2x^3 + 3 x^2\ell\right)\\
+ N_4 &= \frac{1}{\ell^3}\left( x^3\ell - 
+x^2\ell^2\right)
+\end{align}
+
+In a beam, forces and displacements are positive in the positive $y$ direction, while moments and rotations are positive in the counter-clockwise direction. The nodal end forces vector $p$ is found as:
+%
+\begin{equation}
+    p = \begin{bmatrix} f_{1y} & m_1 & f_{2y} & m_2 \end{bmatrix}^\intercal
+\end{equation}
+%
+where, $m_1$ and $m_2$ are the moments at the left and the right nodes, respectively, and $f_{1y}$ and $f_{2y}$ are the vertical forces at the left and the right nodes, respectively. 
+
+\begin{align}
+ f_{1y} & = EI\frac{d^3u}{dx^3}\Big|_{x=0} = \frac{EI}{\ell^3}
+ \left( 12u_1 + 6\ell\phi_1 - 12u_2 + 6 \ell\phi_2\right)\\
+ f_{2y} & = -EI\frac{d^3u}{dx^3}\Big|_{x=\ell} = \frac{EI}{\ell^3}
+ \left( -12u_1 - 6\ell\phi_1 + 12u_2 - 6 \ell\phi_2\right)\\
+ m_1 &= -EI\frac{d^2u}{dx^2}\Big|_{x=0} = \frac{EI}{\ell^3}
+ \left( 6\ell u_1 + 4 \ell^2\phi_1 - 6\ell u_2 + 2 \ell^2\phi_2\right)\\
+ m_2 &= EI\frac{d^2u}{dx^2}\Big|_{x=\ell} = \frac{EI}{\ell^3}
+ \left( 6\ell u_1 + 2 \ell^2\phi_1 - 6\ell u_2 + 4 \ell^2\phi_2\right)
+\end{align}
+
+In matrix form, these equations are expressed as:
+%
+\begin{equation}
+    \begin{pmatrix} f_{1y} \\ m_1 \\ f_{2y} \\ m_2 \end{pmatrix} = \frac{EI}{\ell^3} \begin{bmatrix}
+    12 & 6\ell & -12 & 6\ell \\
+    6\ell & 4\ell^2 & -6\ell & 2\ell^2 \\
+    -12 & -6\ell & 12 & -6\ell \\
+    6\ell & 2\ell^2 & -6\ell & 4\ell^2
+\end{bmatrix}\begin{pmatrix} u_1 \\ \phi_1 \\ u_2 \\ \phi_2 \end{pmatrix}
+\end{equation}
+%
+in which
+%
+\begin{equation}
+    I = \frac{A h^2}{12}
+\end{equation}
+
+Then, the stiffness matrix $K^{(e)}$ of a beam element is defined as:
+%
+\begin{align}
+    K^{(e)} &= \frac{EI}{\ell^3} \begin{bmatrix}
+    12 & 6\ell & -12 & 6\ell \\
+    6\ell & 4\ell^2 & -6\ell & 2\ell^2 \\
+    -12 & -6\ell & 12 & -6\ell \\
+    6\ell & 2\ell^2 & -6\ell & 4\ell^2
+\end{bmatrix}
+\end{align}
+
+The mass matrix $M^{(e)}$ of a beam element is defined as:
+
+\begin{align}
+M^{(e)} &= \frac{\rho A \ell}{420} \begin{bmatrix}
+    156 & 22l & 54 & -13l \\
+    22l & 4l^2 & 13l & -3l^2 \\
+    54 & 13l & 156 & -22l \\
+    -13l & -3l^2 & -22l & 4l^2
+\end{bmatrix}
+\end{align}
+
+Both $K^{(e)}$ and $M^{(e)}$ are symmetric and positive semi-definite matrices.
+
+\section{Damping matrix}
+
+For transient response analysis the damping matrix is evaluated according to the Rayleigh damping, as a linear combination of the mass and stiffness matrices,
+
+\begin{equation}
+    C = \alpha_M M + \beta_K K
+\end{equation}
+
+where $\alpha_M$ and $\beta_K$ are constants with units $s^{-1}$ and $s$, respectively.
+
+\section{Chapter conclusions}
+
+In this chapter, the main differences between the direct and the modal transient response of a structure were shown. Then, the FEM was presented, and the mathematical model of springs, bars, and beams were summarized.
+
+These concepts are used in the core of the software used for CAE, such as NASTRAN. In the next chapter, it will be explained how to use NASTRAN for the analysis of the Transient Response in structures.

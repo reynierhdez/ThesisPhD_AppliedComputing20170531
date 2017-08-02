@@ -1,0 +1,38 @@
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node (start) [startstop] {Start};
+\node (in1) [io, below of=start] {Initial set of particles $s$};
+\node (pro1) [process, below of=in1, yshift=-0.5cm] {Update Blackboard};
+
+\draw[densely dotted, thick, draw=black, fill=white!95!black] ([xshift=-3.25cm,yshift=-0.25cm]pro1.south west) -- ([xshift=3.25cm,yshift=-0.25cm]pro1.south east) -- ([xshift=3.25cm,yshift=-11.75cm]pro1.south east) -- ([xshift=-3.25cm,yshift=-11.75cm]pro1.south west) -- cycle;
+
+\node at (-3.5,-4.5) {\textit{For each particle $i$}};
+
+\node (dec1) [decision, below of=pro1, yshift=-0.75cm, fill=white] {Stopping criteria met?};
+\node (pro2a) [process, below of=dec1, yshift=-0.75cm, fill=white]  {{$s_i^\star$ = Perturbation($s_i$)}};
+\node (dec2) [decision, below of=pro2a, yshift=-0.75cm, fill=white] {$J(s_i^\star) < J(s_i)$};
+\node (pro2b) [process, below of=dec2, xshift=3cm, yshift=-1.2cm, fill=white] {{Exploitation($s_i^\star$)}};
+\node (pro2c) [process, below of=dec2, xshift=-3cm, yshift=-1.2cm, fill=white] {{Scattering}};
+\node (pro2d) [process, below of=pro2c, xshift=3cm, yshift=-0.5cm, fill=white] {\begin{varwidth}{5cm} \centering Update the best particle $s^b$ \end{varwidth}};
+\node (out1) [io, right of=dec1, xshift=7.0cm] {\begin{varwidth}{7.0em} Best Particle $s^b$ \end{varwidth}};
+\node (stop) [startstop, below of=out1, yshift=-0.5cm] {Stop};
+
+\draw [arrow] (start) -- (in1);
+\draw [arrow] (in1) -- (pro1);
+\draw [arrow] (pro1) -- (dec1);
+\draw [arrow] (dec1) -- node[anchor=east] {no} (pro2a);
+\draw [arrow] (dec1) -- node[anchor=south] {yes} (out1);
+\draw [arrow] (pro2a) -- (dec2);
+\draw [arrow] (out1) -- (stop);
+
+\draw [arrow] (pro2d.south) -| ([yshift=-0.5cm]pro2d.south) -| ([xshift=-1.0cm,yshift=-0.5cm]pro2c.south west) |- ([yshift=0.5cm]pro1.north);
+
+\draw [arrow] (dec2) |- ([xshift=-0.0cm,yshift=0.5cm]pro2b.north west) -| node[anchor=south] {yes} (pro2b.north);
+
+\draw [arrow] (dec2) |- ([xshift=-0.0cm,yshift=0.5cm]pro2c.north east) -| node[anchor=south] {no} (pro2c.north);
+
+\draw [arrow] (pro2b.south) |- ([xshift=-0.0cm,yshift=-0.35cm]pro2b.south west) -| (pro2d.north);
+
+\draw [arrow] (pro2c.south) |- ([xshift=-0.0cm,yshift=-0.35cm]pro2c.south east) -| (pro2d.north);
+
+\end{tikzpicture}

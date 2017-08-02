@@ -1,0 +1,188 @@
+\begin{tikzpicture}[node distance=1mm]
+
+\coordinate (a) at (8,16) node[text=blue,above=of a] {1};
+\coordinate (b) at (10,16) node[text=blue,above=of b] {2};
+\coordinate (c) at (8,14);
+\coordinate (d) at (10,14);
+\coordinate (e) at (8,12);
+\coordinate (f) at (10,12);
+\coordinate (g) at (8,10);
+\coordinate (h) at (10,10);
+\coordinate (i) at (8,8);
+\coordinate (j) at (10,8);
+\coordinate (k) at (8,6);
+\coordinate (l) at (10,6);
+\coordinate (m) at (8,4);
+\coordinate (n) at (10,4);
+\coordinate (o) at (8,2);
+\coordinate (p) at (10,2);
+
+\coordinate (aa) at (2,14);
+\coordinate (bb) at (4,14);
+\coordinate (cc) at (6,14);
+\coordinate (dd) at (12,14);
+\coordinate (ee) at (14,14);
+\coordinate (ff) at (16,14);
+\coordinate (gg) at (2,12);
+\coordinate (hh) at (4,12);
+\coordinate (ii) at (6,12);
+\coordinate (jj) at (12,12);
+\coordinate (kk) at (14,12);
+\coordinate (ll) at (16,12);
+
+\coordinate (oo) at (4,4);
+\coordinate (pp) at (6,4);
+\coordinate (qq) at (12,4);
+\coordinate (rr) at (14,4);
+\coordinate (tt) at (4,6);
+\coordinate (uu) at (6,6);
+\coordinate (vv) at (12,6);
+\coordinate (ww) at (14,6);
+
+%\node[hinge,draw,grounded] (A) at (a){};
+%\node[support,draw,grounded] (C) at (c){};
+\node[hinge b,draw] (AA) at (aa){};
+\node[hinge b,draw] (CC) at (cc){};
+\node[hinge b,draw] (BB) at (bb){};
+\node[hinge b,draw] (DD) at (dd){};
+\node[hinge b,draw] (EE) at (ee){};
+\node[hinge b,draw] (FF) at (ff){};
+\node[hinge b,draw] (GG) at (gg){};
+\node[hinge b,draw] (HH) at (hh){};
+\node[hinge b,draw] (II) at (ii){};
+\node[hinge b,draw] (JJ) at (jj){};
+\node[hinge b,draw] (KK) at (kk){};
+\node[hinge b,draw] (LL) at (ll){};
+\node[hinge b,draw] (OO) at (oo){};
+\node[hinge b,draw] (PP) at (pp){};
+\node[hinge b,draw] (QQ) at (qq){};
+\node[hinge b,draw] (RR) at (rr){};
+\node[hinge b,draw] (TT) at (tt){};
+\node[hinge b,draw] (UU) at (uu){};
+\node[hinge b,draw] (VV) at (vv){};
+\node[hinge b,draw] (WW) at (ww){};
+\node[hinge b,draw] (A) at (a){};
+\node[hinge b,draw] (C) at (c){};
+\node[hinge b,draw] (B) at (b){};
+\node[hinge b,draw] (D) at (d){};
+\node[hinge b,draw] (E) at (e){};
+\node[hinge b,draw] (F) at (f){};
+\node[hinge b,draw] (G) at (g){};
+\node[hinge b,draw] (H) at (h){};
+\node[hinge b,draw] (I) at (i){};
+\node[hinge b,draw] (J) at (j){};
+\node[hinge b,draw] (K) at (k){};
+\node[hinge b,draw] (L) at (l){};
+\node[hinge b,draw] (M) at (m){};
+\node[hinge b,draw] (N) at (n){};
+\node[hinge b,draw] (O) at (o){};
+\node[hinge b,draw] (P) at (p){};
+\draw[thick] (B)
+-- node[sloped, below] {18} (A)
+-- node[sloped, below] {48} (D)
+-- node[sloped, below] {46} (E)
+-- node[sloped, below] {44} (H)
+-- node[sloped, below] {42} (I)
+-- node[sloped, below] {40} (L)
+-- node[sloped, below] {38} (M)
+-- node[sloped, below] {36} (P)
+
+(A)
+-- node[sloped, below] {17} (C)
+-- node[sloped, below] {54} (E)
+-- node[sloped, below] {9} (G)
+-- node[sloped, below] {8} (I)
+-- node[sloped, below] {7} (K)
+-- node[sloped, below] {64} (M)
+-- node[sloped, below] {1} (O)
+
+(B)
+-- node[sloped, below] {19} (D)
+-- node[sloped, below] {55} (F)
+-- node[sloped, below] {27} (H)
+-- node[sloped, below] {28} (J)
+-- node[sloped, below] {29} (L)
+-- node[sloped, below] {65} (N)
+-- node[sloped, below] {35} (P)
+
+(G) -- node[sloped, below] {43} (H)
+(I) -- node[sloped, below] {41} (J)
+
+(AA)
+-- node[sloped, below] {14} (BB)
+-- node[sloped, below] {15} (CC)
+-- node[sloped, below] {16} (C)
+-- node[sloped, below] {} (D)
+-- node[sloped, below] {20} (DD)
+-- node[sloped, below] {21} (EE)
+-- node[sloped, below] {22} (FF)
+
+(GG)
+-- node[sloped, below] {12} (HH)
+-- node[sloped, below] {11} (II)
+-- node[sloped, below] {10} (E)
+-- node[sloped, below] {45} (F)
+-- node[sloped, below] {26} (JJ)
+-- node[sloped, below] {25} (KK)
+-- node[sloped, below] {24} (LL)
+
+(GG)
+-- node[sloped, below] {13} (AA)
+-- node[sloped, below] {49} (HH)
+-- node[sloped, below] {51} (CC)
+-- node[sloped, below] {53} (E)
+-- node[sloped, below] {} (D)
+-- node[sloped, below] {56} (JJ)
+-- node[sloped, below] {58} (EE)
+-- node[sloped, below] {60} (LL)
+-- node[sloped, below] {23} (FF)
+
+(BB) -- node[sloped, below] {50} (HH)
+(CC) -- node[sloped, below] {52} (II)
+(DD) -- node[sloped, below] {57} (JJ)
+(EE) -- node[sloped, below] {59} (KK)
+
+(OO)
+-- node[sloped, below] {3} (PP)
+-- node[sloped, below] {2} (M)
+-- node[sloped, below] {37} (N)
+-- node[sloped, below] {34} (QQ)
+-- node[sloped, below] {33} (RR)
+
+(TT)
+-- node[sloped, below] {5} (UU)
+-- node[sloped, below] {6} (K)
+-- node[sloped, below] {39} (L)
+-- node[sloped, below] {30} (VV)
+-- node[sloped, below] {31} (WW)
+
+(TT)
+-- node[sloped, below] {} (OO)
+-- node[sloped, below] {61} (UU)
+-- node[sloped, below] {63} (M)
+-- node[sloped, below] {} (L)
+-- node[sloped, below] {66} (QQ)
+-- node[sloped, below] {68} (WW)
+-- node[sloped, below] {32} (RR)
+
+(PP) -- node[sloped, below] {62} (UU)
+(QQ) -- node[sloped, below] {67} (VV);
+
+\node [platform,anchor=north] at (o)  {};
+\node [platform,anchor=north] at (p)  {};
+
+\draw[<->] (2,8) node[above] {y} -- (2,7) -- (3,7) node[below] {x};
+\draw [->] (2.75,7.25) node[sloped, left=0.15] {$+$} arc (0:90:0.5);
+
+\draw [-latex, very thick , gray] (A) -- +(1cm,1cm)
+	node [right] {\footnotesize $F_{_1}$};
+\draw [-latex, very thick , gray] (B) -- +(1cm,1cm)
+	node [right] {\footnotesize $F_{_2}$};
+
+\draw[ultra thin, red] (C) -- node[sloped, below, font= \footnotesize, align=center] {47 (20\%)} (D);
+\draw[thick, densely dashed] (C) -- node[sloped, above, font= \footnotesize, align=center] {} (D);
+
+\draw[ultra thin, red] (TT) -- node[sloped, below, font= \footnotesize, align=center] {4 (10\%)} (OO);
+\draw[thick, densely dashed] (TT) -- node[sloped, above, font= \footnotesize, align=center] {} (OO);
+
+\end{tikzpicture}

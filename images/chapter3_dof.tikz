@@ -1,0 +1,27 @@
+    \pgfarrowsdeclarecombine{twotriang}{twotriang}%
+{latex}{latex}{latex}{latex}
+
+\begin{tikzpicture}[scale=1.5]
+    % Draw axes
+    \draw [latex-latex,thick] (0,1) node (vaxis) [right] {$u_y$}
+        |- (1,0) node (uaxis) [below] {$u_x$};
+    \draw[-latex,thick] (0,0) -- (-0.65,-.5) node [below right] {$u_z$};
+
+    \draw [-twotriang, thick] (1.2,0) -- (1.6,0) node [below] {$\phi_x$};
+    \draw [-twotriang, thick] (0,1.2) -- (0,1.6) node [right] {$\phi_y$};
+    \draw [-twotriang, thick] (-0.75,-.576923077) -- (-1.05,-.807692308) node [below right] {$\phi_z$};
+
+    
+    
+  \coordinate (a) at (0,0);
+  \coordinate (b) at (-1.4,0.3);
+  \coordinate (c) at (-1,1);
+
+    \draw[blue,fill=blue] (a) circle (.2ex);
+    \draw[blue,fill=blue] (b) circle (.2ex);
+    \draw[blue,fill=blue] (c) circle (.2ex);
+
+    \draw (a) -- (b);
+    \draw (b) -- (c);
+    \draw (c) -- (a);
+\end{tikzpicture}

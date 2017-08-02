@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+
+\tikzstyle{ground}=[fill,pattern=north east lines,draw=none,minimum width=0.75cm,minimum height=0.3cm]
+
+\begin{scope}[node distance=1cm]
+
+\node[draw,outer sep=0pt, thick] (B1) [minimum width=7cm, minimum height=0.5cm]
+{};
+
+\fill (-3.5,0) circle [radius=2pt] node[left] {$1$};
+\fill (3.5,0) circle [radius=2pt] node[right] {$2$};
+
+\draw [-] (-3.5,0.35) -- (-3.5,0.75);
+\draw [-] (3.5,0.35) -- (3.5,0.75);
+
+\draw [-latex] (-3.5,0.55) -- (-2.5,0.55) node[midway,above] {$u_1$};
+\draw [-latex] (3.5,0.55) -- (4.5,0.55) node[midway,above] {$u_2$};
+
+\draw [-] (-3.5,-0.35) -- (-3.5,-0.75);
+\draw [-] (3.5,-0.35) -- (3.5,-0.75);
+\draw [latex-latex] (-3.5,-0.8) -- (3.5,-0.8) node[midway,above] {$\ell$};
+
+\draw[->] (-5.5,0,0) --  (-5,0,0) node[right] {\footnotesize $x$};
+\draw[->] (-5.5,0,0) --  (-5.5,.5,0) node[above] {\footnotesize $y$};
+\draw[->] (-5.5,0,0) --  (-5.5,0,.7) node[below left] {\footnotesize $z$}; 
+  
+\end{scope}
+
+\end{tikzpicture}

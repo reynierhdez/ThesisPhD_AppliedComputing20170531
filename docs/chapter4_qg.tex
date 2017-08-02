@@ -1,0 +1,89 @@
+\section{\texorpdfstring{$q$}{q}-Gradient Method}
+\label{sec:qg}
+
+The first concepts of the $q$-calculus were developed by \citeonline{jackson08,jackson10a,jackson10b}. At the beginning of the 20th century appeared the $q$-analogs of functions, series, special numbers, and the $q$-derivative concepts, including the $q$-gradient vector.
+
+The $q$-gradient ($q$G) method can be described as a $q$-analog of the \textit{steepest descent} method that reduces to its classical version whenever the parameter $q=1$. For $q \neq 1$, the search direction is likely to be either descent or not descent, and the method performs a global search.
+
+In the $q$G method, the search process gradually shifts from global in the beginning to almost local search in the end \cite{soterroni12a}.
+
+\begin{definition}
+Let $J$ be a differentiable (objective) function of $n$ variables, the $n$ first-order partial $q$-derivatives of $J$ with respect to the variable $s_d$ are given by \autoref{eq:dq} \cite{soterroni2011,soterroni12a,soterroni13}.
+%
+\begin{equation}
+\label{eq:dq}
+D_{q_{_d},s_{_d}} J(s) =
+\begin{dcases}
+\dfrac{J(s_{_1}, \cdots,q_{_d} s_{_d}, \cdots, s_{_n}) - J(s_{_1}, \cdots, s_{_n}) }{q_{_d} s_{_d} -  s_{_d}},  & \text{if} \, s_{_d}  \neq 0 \; \textrm{and} \; q_{_d} \neq 1, \\
+\dfrac{\partial J(s)}{\partial s_{_d}}, & \text{otherwise},
+\end{dcases}
+\end{equation}
+%
+where $ q =  \left( q_{_1}, \cdots, q_{_n} \right) \in \R^n $.
+\end{definition}
+
+When $s_{_d} = 0$ or $q_{_d} = 1$, $\forall d$, the first-order partial $q$-derivative is the classical first-order partial derivative.
+
+\begin{definition}
+The $q$-gradient is the vector of the $n$ first-order partial $q$-derivatives of $f$ \cite{soterroni2011,soterroni12a,soterroni13}
+%
+\begin{equation}
+\label{eq:qgradient}
+\nabla_{q}J(s) = \left[D_{q_{_1},s_{_1}} J(s) \cdots D_{q_{_d},s_{_d}} J(s) \cdots D_{q_{_n},s_{_n}} J(s)\right]. 
+\end{equation}
+\end{definition}
+
+The $q$G method uses an iterative procedure that, starting from an initial point $s$, generates a sequence $s$ given by:
+%
+\begin{equation}
+s =  s + \alpha v,
+\end{equation}
+%
+where $v$ is the search direction, and $\alpha$ is the step length or the distance moved along $v$. Thus, the search direction $v$ in the $q$G method is the negative of the $q$-gradient of the objective function $- \nabla_q J(s)$ (\autoref{eq:qgradient}).
+
+The parameters $q_{_d}$ are generated drawing their values from a Gaussian probability distribution, such that $q_{_d} s_{_d}$ has a standard deviation $\sigma$ that decreases as the iterative search proceeds \cite{soterroni12a,soterroni13}. The process starts from a given $\sigma$, that is decreased by the reduction factor $\beta: 0 <\beta < 1$. When $\sigma$ goes to $0$, $q_{_d}$ tend to unity. The $q$G method starts as a global search method, and gradually becomes a local search, with a similar behavior to the \textit{steepest descent} method \cite{soterroni13}
+
+The step length $\alpha$ is computed by the geometric recursion $\alpha = \beta \cdot \alpha$, where $\beta$ is the same for updating $\sigma$ \cite{soterroni12a,soterroni13}.
+
+The algorithm for the $q$G method is summarized in the \autoref{alg:qg}.
+
+\begin{algorithm}[H]
+\caption{$q$-gradient method}
+\label{alg:qg}
+\footnotesize
+\begin{algorithmic}[1]
+\State Given initial point $s$, $\sigma>0$, $\alpha>0$ and $0< \beta < 1$
+\State $s^b = s$
+\While{$N_{FE} < N_{FE}^{qG}$} \Comment{Stopping criterion}
+\State Generate $qs$ by a Gaussian distribution with $\sigma$, and $\mu=s$
+\State Calculate the $q$-gradient $\nabla_q J(s)$
+\State $d = - \nabla_q J(s) / \| \nabla_q J(s) \|$
+\State $s = s + \alpha \cdot v$
+\If {$J(s) < J(s^b)$}
+\State $s^b = s$
+\EndIf
+\State $\sigma = \beta \cdot \sigma$
+\State $\alpha = \beta \cdot \alpha$
+\EndWhile
+\State \Return $s^b$
+\end{algorithmic}
+\end{algorithm}
+
+The values of $\sigma$ and $\alpha$ are normalized by the largest distance within the search space $L$, calculated by:
+%
+\begin{equation}
+L=\sqrt{\sum_{d=1}^{D}(s^u_{_d}-s^l_{_d})^2}
+\end{equation}
+
+\subsection{Stopping criteria}
+
+The stopping criterion is the maximum number of the function evaluations ($N_{FE}^{qG}$).
+
+\begin{figure}[H]
+\caption{Flowchart of the $q$-gradient}
+\label{fig:qg}
+\centering
+\vspace{1em}
+\scalebox{.8}{
+\includegraphics{images/chapter4_qg.tikz}}
+\end{figure}

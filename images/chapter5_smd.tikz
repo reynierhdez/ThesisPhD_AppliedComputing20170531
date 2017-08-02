@@ -1,0 +1,71 @@
+\begin{tikzpicture}
+\tikzstyle{spring}=[thick,decorate,decoration={zigzag,pre length=0.1cm,post length=0.1cm,segment length=4}]
+ 
+\tikzstyle{damper}=[thick,decoration={markings,  
+  mark connection node=dmp,
+  mark=at position 0.5 with 
+  {
+    \node (dmp) [thick,inner sep=0pt,transform shape,rotate=-90,minimum width=10pt,minimum height=3pt,draw=none] {};
+    \draw [thick] ($(dmp.north east)+(1pt,1pt)$) -- ($(dmp.south east)+(0pt,1pt)$) -- ($(dmp.south west)+(0pt,-1pt)$) -- ($(dmp.north west)+(1pt,-1pt)$);
+    \draw [thick] ($(dmp.north)+(0,-3pt)$) -- ($(dmp.north)+(0,3pt)$);
+  }
+}, decorate]
+\tikzstyle{ground}=[fill,pattern=north east lines,draw=none,minimum width=0.75cm,minimum height=0.3cm]
+\begin{scope}
+\node[draw,outer sep=0pt,thick] (M1) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M2) at (1.5,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M3) at (3.0,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M4) at (4.5,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M5) at (6.0,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M6) at (7.5,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M7) at (9.0,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M8) at (10.5,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M9) at (12.0,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node[draw,outer sep=0pt,thick] (M10) at (13.5,0) [minimum width=0.7cm, minimum height=1.2cm] {$m$};
+\node (wall) [ground, rotate=-90, minimum width=3cm,yshift=-1.2cm] {};
+\draw (wall.north east) -- (wall.north west);
+\draw [spring] (wall.160) -- ($(M1.north west)!(wall.160)!(M1.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M1.north east)!(wall.160)!(M1.south east)$) -- ($(M2.north west)!(wall.160)!(M2.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M2.north east)!(wall.160)!(M2.south east)$) -- ($(M3.north west)!(wall.160)!(M3.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M3.north east)!(wall.160)!(M3.south east)$) -- ($(M4.north west)!(wall.160)!(M4.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M4.north east)!(wall.160)!(M4.south east)$) -- ($(M5.north west)!(wall.160)!(M5.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M5.north east)!(wall.160)!(M5.south east)$) -- ($(M6.north west)!(wall.160)!(M6.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M6.north east)!(wall.160)!(M6.south east)$) -- ($(M7.north west)!(wall.160)!(M7.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M7.north east)!(wall.160)!(M7.south east)$) -- ($(M8.north west)!(wall.160)!(M8.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M8.north east)!(wall.160)!(M8.south east)$) -- ($(M9.north west)!(wall.160)!(M9.south west)$) node [midway, above] {$k$};
+\draw [spring] ($(M9.north east)!(wall.160)!(M9.south east)$) -- ($(M10.north west)!(wall.160)!(M10.south west)$) node [midway, above] {$k$};
+
+\draw [damper] (wall.20) -- ($(M1.north west)!(wall.20)!(M1.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M1.north east)!(wall.20)!(M1.south east)$) -- ($(M2.north west)!(wall.20)!(M2.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M2.north east)!(wall.20)!(M2.south east)$) -- ($(M3.north west)!(wall.20)!(M3.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M3.north east)!(wall.20)!(M3.south east)$) -- ($(M4.north west)!(wall.20)!(M4.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M4.north east)!(wall.20)!(M4.south east)$) -- ($(M5.north west)!(wall.20)!(M5.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M5.north east)!(wall.20)!(M5.south east)$) -- ($(M6.north west)!(wall.20)!(M6.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M6.north east)!(wall.20)!(M6.south east)$) -- ($(M7.north west)!(wall.20)!(M7.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M7.north east)!(wall.20)!(M7.south east)$) -- ($(M8.north west)!(wall.20)!(M8.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M8.north east)!(wall.20)!(M8.south east)$) -- ($(M9.north west)!(wall.20)!(M9.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+\draw [damper] ($(M9.north east)!(wall.20)!(M9.south east)$) -- ($(M10.north west)!(wall.20)!(M10.south west)$) node [midway, above,label={[label distance=-0.2cm]90:$c$}] {};
+
+\draw[thick, dashed, gray] ($(M1.north west)$) -- ($(M1.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M2.north west)$) -- ($(M2.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M3.north west)$) -- ($(M3.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M4.north west)$) -- ($(M4.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M5.north west)$) -- ($(M5.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M6.north west)$) -- ($(M6.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M7.north west)$) -- ($(M7.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M8.north west)$) -- ($(M8.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M9.north west)$) -- ($(M9.north west) + (0,1)$);
+\draw[thick, dashed, gray] ($(M10.north west)$) -- ($(M10.north west) + (0,1)$);
+    
+\draw[thick, -latex, gray] ($(M1.north west) + (0,0.75)$) -- ($(M1.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M2.north west) + (0,0.75)$) -- ($(M2.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M3.north west) + (0,0.75)$) -- ($(M3.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M4.north west) + (0,0.75)$) -- ($(M4.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M5.north west) + (0,0.75)$) -- ($(M5.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M6.north west) + (0,0.75)$) -- ($(M6.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M7.north west) + (0,0.75)$) -- ($(M7.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M8.north west) + (0,0.75)$) -- ($(M8.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M9.north west) + (0,0.75)$) -- ($(M9.north west) + (0.75,0.75)$) node [midway, above] {$F$};
+\draw[thick, -latex, gray] ($(M10.north west) + (0,0.75)$) -- ($(M10.north west) + (0.75,0.75)$) node [midway, above] {$F$};                            
+\end{scope}
+\end{tikzpicture}

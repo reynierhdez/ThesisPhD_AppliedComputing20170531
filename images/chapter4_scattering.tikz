@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+\proton(0,0)
+\proton(0.8,0.2)
+\proton(0.5,-0.5)
+\proton(-0.25,-0.5)
+\proton(0.55,0.8)
+\proton(-0.5,0.2)
+\proton(-0.1,0.8)
+\proton(0.12,0.6)
+\proton(0.12,-0.6)
+\proton(-0.25,0)
+\draw[->-=.7,ultra thick, densely dashed] (15:5) to (0:0.5);
+\draw[->-=.7,ultra thick, densely dashed] (0:0.5) to (345:5);
+\neutron(15,5)
+\neutron(345,5)
+\neutronrejeited(0,0.5)
+\end{tikzpicture}

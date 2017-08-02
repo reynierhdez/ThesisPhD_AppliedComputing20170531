@@ -1,0 +1,30 @@
+\begin{tikzpicture}[node distance=1.25cm]
+
+\node (start) [startstop] {Start};
+\node (in1) [io, right of=start, xshift=4cm] {Input base point $s^c$};
+\node (dec1) [decision, below of=in1, yshift=-1.3cm] {Stopping criteria met?};
+\node (pro2a) [process, below of=dec1, yshift=-1.3cm]  {Exploratory($s$)};
+\node (dec2) [decision, below of=pro2a, yshift=-0.5cm] {$J(s) < J(s^c)$};
+\node (pro2b) [process, below of=dec2, yshift=-0.5cm] {$s^{\circ} = s + (s-s^c)$};
+\node (pro2c) [process, right of=dec2, xshift=4.0cm] {$h = h \times \rho$};
+\node (dec3) [decision, below of=pro2b, yshift=-0.5cm] {$J(s^{\circ}) < J(s)$};
+\node (pro3a) [process, below of=dec3, yshift=-0.5cm] {$s = s^{\circ}$};
+
+\node (out1) [io, left of=dec1, xshift=-4cm, yshift=-2cm] {Return $s^{c}$};
+\node (stop) [startstop, below of=out1, yshift=-0.5cm] {Stop};
+
+\draw [arrow] (start) -- (in1);
+\draw [arrow] (in1) -- (dec1);
+\draw [arrow] (dec1) -- node[anchor=west,yshift=0.2cm] {no} (pro2a);
+\draw [arrow] (dec1.west) node[anchor=south east] {yes} -|  (out1.north);
+\draw [arrow] (pro2a) -- (dec2);
+\draw [arrow] (dec2) -- node[anchor=east] {yes} (pro2b);
+\draw [arrow] (dec2) -- node[anchor=south] {no} (pro2c);
+\draw [arrow] (pro2b) -- (dec3);
+\draw [arrow] (out1) -- (stop);
+\draw [arrow] (dec3) -- node[anchor=east] {yes} (pro3a);
+\draw [arrow] (dec3.east) node[anchor=north west, xshift=0.1cm] {no} -| (pro2c.south) ;
+\draw [arrow] (pro3a.south) |- ([xshift=0.5cm,yshift=-0.5cm]pro3a.south west) -| ([xshift=-1.01cm,yshift=0.5cm]pro2a.north west) -- ([yshift=0.5cm]pro2a.north);
+\draw [arrow] (pro2c) |- ([yshift=0.5cm]dec1.north);
+
+\end{tikzpicture}

@@ -1,0 +1,348 @@
+% \usepackage{etex}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{multirow}
+%\usepackage{caption}
+\usepackage{changes}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{parskip}
+\usepackage{rotating}
+\usepackage[graphicx]{realboxes}
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage{mathtools}
+\usepackage[outline]{contour}
+\usepackage{adjustbox}
+\usepackage{enumitem}
+\usepackage[final]{listings}
+\usepackage{array}
+\usepackage{forest}
+\usepackage[skins]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{pgfplotstable}
+\usepackage{pgfplots}
+\usepackage{pgfgantt}
+\usepackage{tikzscale}
+\usepackage{breakcites}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{dirtytalk}
+\usepackage{makecell}
+% \usepackage{subcaption}
+\usepackage{smartdiagram}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{calligra}
+\usepackage[T1]{fontenc}
+\usepackage{acronym}
+\usepackage{epigraph}
+\usepackage{morewrites}
+\usepackage{pdfrender}
+
+\newcommand{\subfigureautorefname}{Figure}
+
+\renewcommand{\epigraphsize}{\small}
+\setlength{\epigraphwidth}{0.6\textwidth}
+\renewcommand{\textflush}{flushright}
+\renewcommand{\sourceflush}{flushright}
+% A useful addition
+\newcommand{\epitextfont}{\itshape}
+\newcommand{\episourcefont}{\scshape}
+
+\makeatletter
+\newsavebox{\epi@textbox}
+\newsavebox{\epi@sourcebox}
+\newlength\epi@finalwidth
+\renewcommand{\epigraph}[2]{%
+  \vspace{\beforeepigraphskip}
+  {\epigraphsize\begin{\epigraphflush}
+   \epi@finalwidth=\z@
+   \sbox\epi@textbox{%
+     \varwidth{\epigraphwidth}
+     \begin{\textflush}\epitextfont#1\end{\textflush}
+     \endvarwidth
+   }%
+   \epi@finalwidth=\wd\epi@textbox
+   \sbox\epi@sourcebox{%
+     \varwidth{\epigraphwidth}
+     \begin{\sourceflush}\episourcefont#2\end{\sourceflush}%
+     \endvarwidth
+   }%
+   \ifdim\wd\epi@sourcebox>\epi@finalwidth 
+     \epi@finalwidth=\wd\epi@sourcebox
+   \fi
+   \leavevmode\vbox{
+     \hb@xt@\epi@finalwidth{\hfil\box\epi@textbox}
+     \vskip1.75ex
+     \hrule height \epigraphrule
+     \vskip.75ex
+     \hb@xt@\epi@finalwidth{\hfil\box\epi@sourcebox}
+   }%
+   \end{\epigraphflush}
+   \vspace{\afterepigraphskip}}}
+\makeatother
+
+\makeatletter 
+\renewcommand\thealgorithm{\thechapter.\arabic{algorithm}} 
+\@addtoreset{algorithm}{chapter} 
+\makeatother
+
+\pgfplotsset{compat=newest}
+% \usepackage{definition}
+
+\renewcommand{\floatpagefraction}{.9}%
+
+\setlist[itemize]{topsep=0pt,before=\leavevmode\vspace{-1.5em}}
+\setlist[description]{style=nextline}
+
+\newcommand*{\tabref}[1]{\tablename~\ref{#1}}
+\newcommand*{\figref}[1]{\figurename~\ref{#1}}
+\newcommand*{\secref}[1]{Section~\ref{#1} \:}
+\newcommand*{\algoref}[1]{Algorithm~\ref{#1}}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+
+\newcommand{\algorithmautorefname}{Algorithm}
+
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\newganttchartelement*{mymilestone}{
+mymilestone/.style={
+shape=isosceles triangle,
+inner sep=0pt,
+draw=cyan,
+top color=white,
+bottom color=cyan!50
+},
+mymilestone incomplete/.style={
+/pgfgantt/mymilestone,
+draw=yellow,
+bottom color=yellow!50
+},
+mymilestone label font=\slshape,
+mymilestone left shift=0pt,
+mymilestone right shift=0pt
+}
+
+\newgantttimeslotformat{stardate}{%
+\def\decomposestardate##1.##2\relax{%
+\def\stardateyear{##1}\def\stardateday{##2}%
+}%
+\decomposestardate#1\relax%
+\pgfcalendardatetojulian{\stardateyear-01-01}{#2}%
+\advance#2 by-1\relax%
+\advance#2 by\stardateday\relax%
+}
+
+\definecolor{bblue}{rgb}{0,0,.4}
+\captionsetup{font=footnotesize}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\algnewcommand\algorithmicswitch{\textbf{switch}}
+\algnewcommand\algorithmiccase{\textbf{case}}
+\algnewcommand\algorithmicassert{\texttt{assert}}
+\algnewcommand\Assert[1]{\State \algorithmicassert(#1)}%
+
+\algdef{SE}[SWITCH]{Switch}{EndSwitch}[1]{\algorithmicswitch\ #1\ \algorithmicdo}{\algorithmicend\ \algorithmicswitch}
+\algdef{SE}[CASE]{Case}{EndCase}[1]{\algorithmiccase\ #1}{\algorithmicend\ \algorithmiccase}
+
+\algblockdefx[Default]{Default}{EndDefault}[1][]{\textbf{default} #1}{end default}
+
+\algtext*{EndSwitch}
+\algtext*{EndCase}
+\algtext*{EndWhile}
+\algtext*{EndIf}
+\algtext*{EndFor}
+\algtext*{EndFunction}
+\algtext*{EndDefault}
+
+\bgroup
+\def\arraystretch{1.5}
+
+\usetikzlibrary{shapes}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{decorations.pathmorphing,patterns}
+\usetikzlibrary{calc,patterns,decorations.markings}
+\usetikzlibrary{shapes,arrows,calc,intersections}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{shapes}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{decorations.pathmorphing,patterns}
+\usetikzlibrary{calc,patterns,decorations.markings}
+\usetikzlibrary{shapes,arrows,calc,intersections}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{decorations.pathmorphing,patterns}
+\usetikzlibrary{calc,patterns,decorations.markings}
+\usetikzlibrary{shapes,arrows,calc,intersections}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{mindmap,trees}
+\usetikzlibrary{shadows}
+\usetikzlibrary{shapes,arrows,calc,intersections}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathreplacing} 
+\usetikzlibrary{angles,quotes}
+\usetikzlibrary{decorations.markings} 
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc,patterns,decorations.pathmorphing,decorations.markings}
+\usetikzlibrary{patterns}
+\usetikzlibrary{pgfplots.groupplots}
+\usetikzlibrary{pgfplots.statistics}
+\usetikzlibrary{arrows.meta}
+
+
+\tikzstyle{platform}=[fill,pattern=north east lines,draw=none,minimum width=1cm,minimum height=0.3cm]
+
+\makeatletter
+\def\underscoreusetikzlibrary{\pgfutil@ifnextchar[{\underscoreuse@tikzlibrary}{\underscoreuse@@tikzlibrary}}%}
+\def\underscoreuse@tikzlibrary[#1]{\underscoreuse@@tikzlibrary{#1}}
+\def\underscoreuse@@tikzlibrary#1{%
+  \edef\pgf@list{#1}%
+  \pgfutil@for\pgf@temp:=\pgf@list\do{%
+	\expandafter\pgfkeys@spdef\expandafter\pgf@temp\expandafter{\pgf@temp}%
+	\ifx\pgf@temp\pgfutil@empty
+	\else
+		\expandafter\ifx\csname tikz@library@\pgf@temp @loaded\endcsname\relax%
+		  \expandafter\global\expandafter\let\csname tikz@library@\pgf@temp @loaded\endcsname=\pgfutil@empty%
+		  \expandafter\edef\csname tikz@library@#1@atcode\endcsname{\the\catcode`\@}
+		  \expandafter\edef\csname tikz@library@#1@barcode\endcsname{\the\catcode`\|}
+		  \catcode`\@=11
+		  \catcode`\|=12
+		  \input tikzlibrary\pgf@temp_code.tex
+		  \catcode`\@=\csname tikz@library@#1@atcode\endcsname
+		  \catcode`\|=\csname tikz@library@#1@barcode\endcsname
+		\fi%
+	\fi
+  }%
+}
+\makeatother
+\underscoreusetikzlibrary{mec}
+
+\contourlength{1pt}
+
+\renewcommand{\arraystretch}{0.9}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=2cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, aspect=2.5]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\definecolor{myyellow}{RGB}{254,241,24}
+\definecolor{myorange}{RGB}{234,125,1}
+
+\def\proton(#1,#2){%
+    \fill[ball color=yellow] (#1,#2) circle (10pt);
+}
+\def\neutron(#1,#2){%
+    \fill[ball color=blue] (#1:#2) circle (10pt);
+}
+\def\neutronrejeited(#1,#2){%
+    \fill[ball color=blue,fill opacity=.4,draw,densely dotted] (#1:#2) circle (10pt);
+}
+\def\electron(#1,#2){%
+    \fill[ball color=green!30] (#1:#2) circle (10pt);
+}
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{latex}}},postaction={decorate}}
+}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+% \newenvironment{definition}
+%   {\pushQED{\qed}\renewcommand{\qedsymbol}{$\triangle$}\examplex}
+%   {\popQED\endexamplex}
+\providecommand*\definitionautorefname{Definition}
+
+\def\myrad{2cm}
+\def\myang{30}
+
+\pgfdeclarepatternformonly{south west lines}{\pgfqpoint{-0pt}{-0pt}}{\pgfqpoint{3pt}{3pt}}{\pgfqpoint{3pt}{3pt}}{
+        \pgfsetlinewidth{0.4pt}
+        \pgfpathmoveto{\pgfqpoint{0pt}{0pt}}
+        \pgfpathlineto{\pgfqpoint{3pt}{3pt}}
+        \pgfpathmoveto{\pgfqpoint{2.8pt}{-.2pt}}
+        \pgfpathlineto{\pgfqpoint{3.2pt}{.2pt}}
+        \pgfpathmoveto{\pgfqpoint{-.2pt}{2.8pt}}
+        \pgfpathlineto{\pgfqpoint{.2pt}{3.2pt}}
+        \pgfusepath{stroke}}
+        
+\newcommand{\R}{\mathbb{R}}
+
+
+\definecolor{armygreen}{rgb}{0.29, 0.33, 0.13}
+\definecolor{oucrimsonred}{rgb}{0.6, 0.0, 0.0}
+\definecolor{yaleblue}{rgb}{0.06, 0.3, 0.57}
+\definecolor{sandstorm}{rgb}{0.93, 0.84, 0.25}
+\definecolor{vegasgold}{rgb}{0.77, 0.7, 0.35}
+
+\pgfplotsset{compat=1.11,
+    /pgfplots/ybar legend/.style={
+    /pgfplots/legend image code/.code={%
+       \draw[##1,/tikz/.cd,yshift=-0.25em]
+        (0cm,0cm) rectangle (3pt,0.8em);},
+   },
+}
+
+\makeatletter
+
+% define a macro \Autoref to allow multiple references to be passed to \autoref
+\newcommand\Autoref[1]{\@first@ref#1,@}
+\def\@throw@dot#1.#2@{#1}% discard everything after the dot
+\def\@set@refname#1{%    % set \@refname to autoefname+s using \getrefbykeydefault
+    \edef\@tmp{\getrefbykeydefault{#1}{anchor}{}}%
+    \def\@refname{\@nameuse{\expandafter\@throw@dot\@tmp.@autorefname}s}%
+}
+\def\@first@ref#1,#2{%
+  \ifx#2@\autoref{#1}\let\@nextref\@gobble% only one ref, revert to normal \autoref
+  \else%
+    \@set@refname{#1}%  set \@refname to autoref name
+    \@refname~\ref{#1}% add autoefname and first reference
+    \let\@nextref\@next@ref% push processing to \@next@ref
+  \fi%
+  \@nextref#2%
+}
+\def\@next@ref#1,#2{%
+   \ifx#2@ and~\ref{#1}\let\@nextref\@gobble% at end: print and+\ref and stop
+   \else, \ref{#1}% print  ,+\ref and continue
+   \fi%
+   \@nextref#2%
+}
+
+\makeatother
+
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\Cref*{#1} \nameref*{#1}}} % One single link
+
+\makeatletter
+\AtBeginDocument{%
+  \let\l@algorithm\l@figure%
+  \let\listofalgorithms\listoffigures% Copy \listoffigures
+  \let\@cftmakeloatitle\@cftmakeloftitle% Copy LoF title
+  % Update LoA-related macros
+  \patchcmd{\listofalgorithms}{\@cftmakeloftitle}{\@cftmakeloatitle}{}{}%
+  \patchcmd{\listofalgorithms}{\@starttoc{lof}}{\@starttoc{loa}}{}{}%
+  \patchcmd{\@cftmakeloatitle}{\listfigurename}{\listalgorithmname}{}{}%
+  % Add per-chapter LoA space (similar to LoF)
+  \patchcmd{\@chapter}{\addtocontents}{%
+    \addtocontents{loa}{\protect\addvspace{10\p@}}%
+    \addtocontents}{}{}%
+}
+
+\makeatother

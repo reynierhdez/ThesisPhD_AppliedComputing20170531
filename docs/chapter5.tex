@@ -1,0 +1,1746 @@
+\chapter{Vibration-based Damage Identification on system/structures modeled with FORTRAN, and using \textit{in silico} data}
+\label{chp:7}
+\epigraph{FORTRAN is not a flower but a weed -- it is hardy, occasionally blooms, and grows in every computer.}{Alan J. Perlis}
+
+In the last chapters, all the methodology were defined for identifying damages in structures in the last chapters. In this chapter, will be presented some results obtained on structures whose models were implemented in FORTRAN.
+
+First, it will be defined the steps of the experimental design. Next, some case studies will be presented: a damped spring-mass system with 10-DOF, the Kabe's problem, the Yang's problem, a truss system with 12-DOF, a truss model for the International Space Station, and a cantilevered beam.
+
+\section{Experiment design}
+
+The experimental design to identify damage in structures consists of the following steps:
+
+\begin{enumerate}[label=(\arabic*)]
+    \item Implement the solution of the model of the structure using FORTRAN.
+    \item Create \textit{in silico} observed data $u^{obs}$ using the damage configuration as input of the model, \textit{i.e.} modifying the stiffness of each damaged element.
+    \item Add some noise to the synthetic measurements.
+    \item Set-up the hybrid algorithm depending on the characteristics of the structure (the dimension number, and the magnitude of the error).
+    \item Run the hybrid algorithm at least 15 times and tabulate the output damage parameters.
+    \item Obtain some statistics, depending on the analysis to be performed.
+\end{enumerate}
+
+The search space for these problems is defined between $50\%$ and $105\%$ of damage. These values were defined empirically.
+
+\begin{figure}[H]
+    \caption{Vibration-Based Damage Identification as optimization problem using a model implemented in Fortran}
+    \label{fig:inversefortran}
+    \centering
+    \vspace{1em}
+    \resizebox{0.8\textwidth}{!}{\includegraphics{images/chapter5_inversesolution.tikz}}
+\end{figure}
+
+The way to create in silico noisy data will be presented in the next section.
+
+\subsection{Noise in data}
+
+In real life, measurements are commonly corrupted by noise that affects the sensors. In another hand, the solution of an inverse problem can be affected by small perturbations or noise on the measurement caused by oscillations.
+
+For testing the robustness of the algorithm in the solution of the inverse problem, some noise is added to the synthetic measured data \cite{nichols2016modeling}:
+%
+\begin{equation}
+\label{eq:noise}
+{\hat{u}}(t) = {u}(t) + \mathcal{N}(0,\sigma),
+\end{equation}
+%
+where ${\hat{u}}(t)$ is the noisy data, and  $\mathcal{N}(0,\sigma)$ is the Gaussian distribution with mean $0$ and standard deviation $\sigma$.
+
+\section{Case study 1: Damped spring-mass system with 10-DOF}
+\label{sec:springmass}
+
+The results in this section were presented at the 10th International Conference on Composite Science and Technology -- \cite{HernandezTorres2015b}.
+
+\autoref{fig:springmass} shows a damped spring-mass system with 10-DOF. Parameters for all the elements of the system are assumed as $m = 10.0~kg$, the springs have a stiffness $k= 2\times 10^{5}~N/m$, and the damping matrix is assumed proportional to the stiffness matrix $C = 5.0 \times 10^{-3}~K$.
+
+Constant external forces $F_i = 5~N$ are assumed over all the masses.
+
+\begin{figure}[H]
+\centering
+\caption{Case study 1: Damped spring-mass system with 10-DOF}
+\label{fig:springmass}
+\resizebox{\columnwidth}{!}{\includegraphics{images/chapter5_smd.tikz}}
+\end{figure}
+
+For the experiments, the numerical integration was performed assuming $t_f = 5~s$, and a time step $\Delta t=5\times 10^{-3}~s$.
+
+For this system, the following damage configuration was assumed: 10\% on the $1^{st}$ spring, 25\% on the $3^{rd}$, 15\% on the $4^{th}$, 5\% on the $5^{th}$, 30\% on the $7^{th}$, 20\% on the $8^{th}$, and 10\% on the $10^{th}$. All the others elements have been assumed as undamaged.
+
+For this experiment, the hybrid algorithm MPCA-HJ was configured with the control parameters presented in \autoref{tab:param_sm}.
+
+\begin{table}[H]
+\caption{Control parameters for MPCA-HJ for case study 1}
+\label{tab:param_sm}
+\footnotesize
+\centering
+\begin{tabular}{ccc}
+\hline
+Algorithm & Parameter & Value \\
+\hline
+\multirow{5}{*}{MPCA} & $N_{particles}$ & $10$ \\
+\\[-0.7em]
+& $N_{FE}^{mpca}$ & $10000$ \\
+\\[-0.7em]
+ & $N_{FE}^{blackboard}$ & $1000$ \\
+\\[-0.7em]
+ & $R^{inf}$ & $0.7$ \\
+ & $R^{sup}$ & $1.1$ \\
+\hline
+\multirow{3}{*}{HJ} & $h_{min}$ & $1 \times 10^{-10}$ \\
+ & $\rho $ & $0.8$ \\
+ & $N_{FE}^{hj}$ & $10000$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\autoref{fig:resultsspringmass} shows the results for the estimated damage parameters. White bars indicate the exact damage values, and blue, green and gold bars represent the estimated damages for noiseless, noise with 2\% and 5\%, respectively. Almost perfect damage estimation was obtained for the case with noiseless data, while good results were obtained using 2\% and 5\% noisy experimental data.
+
+\begin{figure}[H]
+\caption{Results using MPCA-HJ on the case study 1}
+\label{fig:resultsspringmass}
+\begin{center}
+\pgfplotstableread{
+element real noiseless noisy2 noisy5
+1 10 10 12 14.82
+2 0 0 0.26 0.60
+3 25 25 24.99 24.95
+4 15 15 14.84 14.59
+5 5 5 4.68 4.18
+6 0 0 0 0
+7 30 30 29.54 28.86
+8 20 20 19.39 18.47
+9 0 0 0 0
+10 10 10 9.21 8.03
+}\dataset
+
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -1,
+        ymax = 40,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Real,Noiseless, Noise 2\%, Noise 5\%},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+    
+\addplot[draw=black,fill=white, nodes near coords] table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue, nodes near coords] table[x index=0,y index=2] \dataset;
+\addplot[draw=black,fill=armygreen, nodes near coords] table[x index=0,y index=3] \dataset;
+\addplot[draw=black,fill=vegasgold, nodes near coords] table[x index=0,y index=4] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\section{Case Study 4: Truss system with 12-DOF}
+\label{sec:truss}
+
+The results presented in this section are the same presented in the 10th International Conference on Composite Science and Technology -- \cite{HernandezTorres2015b}, and in the XXXVI Iberian Latin-American Congress on Computational Methods in Engineering \cite{HernandezTorres2015}.
+
+\autoref{fig:truss} shows a three-bay truss structure modeled with 12 bars and 12-DOF. Properties and dimensions are shown in \autoref{tab:properties}. The damping matrix is assumed proportional to the stiffness matrix ($C = 10^{-5}K$). External forces in the positive diagonal direction are imposed over the nodes $1$ and $2$. Initial conditions for displacement and velocity are equal to zero ($u(0) = 0, \dot u(0) = 0$). The final time for all the numerical simulations was assumed as $t_f = 5 \times 10^{-2}~s$, with a time step of $5 \times 10^{-4}~s$.
+
+\begin{figure}[H]
+\caption{Case study 4: Three-bay truss structure}
+\label{fig:truss}
+\centering
+\resizebox{0.75\columnwidth}{!}{
+\includegraphics{images/chapter5_t12.tikz}
+}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Material properties for case study 4}
+\label{tab:properties}
+\begin{tabular}{ll}
+\hline
+Property & Value\\
+\hline
+Element type & Bars \\
+Material & Aluminum\\
+Young’s modulus ($E$) & $70~GPa$\\
+Material density ($\rho$) & $2700~kg/m^3$\\
+Square cross section area ($A$) & $2.5 \times 10^{-5}~m^2$ \\
+Non-diagonal elements length ($l_{_{non-diagonal}}$) & $1.0~m$ \\
+Diagonal elements length ($l_{_{diagonal}}$) & $1.414~m$ \\
+\hline
+\end{tabular}
+\end{table}
+
+A damage configuration of 15\% over the $2^{nd}$ element, 5\% over the $4^{th}$, 30\% over the $7^{th}$, 10\% over the $10^{th}$ and 20\% over the $12^{th}$ element was considered. All the others elements have been assumed as undamaged.
+
+In this experiment, it is performed a comparison between $q$G-HJ, MPCA-HJ, CBMPCA-HJ, and RBSMPCA-HJ. \autoref{tab:param_t12} shows the stopping criteria and the control parameters for the algorithms.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Search space, control parameters and stopping criteria for the hybrid algorithms in the case study 4}
+\label{tab:param_t12}
+\begin{tabular}{cll}
+\hline
+Algorithm & Parameter & Value \\
+\hline
+\multirow{5}{*}{MPCA} & $N_{particles}$ & $10$ \\
+ & $R^{inf}$ & $0.7$ \\
+ & $R^{sup}$ & $1.1$ \\
+ \\[-0.7em]
+ & $N_{FE}^{blackboard}$ & $1000$ \\
+ \\[-0.7em]
+ & $N_{FE}^{mpca}$ & $100000$ \\
+ \\[-0.7em]
+ \hline
+\multirow{2}{*}{RBS} & $\beta_0$ & $3.14$~rad\\
+ & $\delta$ & $0.25$\\
+\hline
+\multirow{4}{*}{$q$G} & $\sigma^0$ & $0.2 L$\\
+ & $\alpha^0$ & $0.1 L$\\
+ & $\beta$ & $0.999$\\
+ & $N_{FE}^{qG}$ & $70000$ \\
+\hline
+\multirow{5}{*}{HJ} & $\rho $ & $0.8$ \\
+ & \multirow{2}{*}{$h_{min}$} & $1 \times 10^{-7}$ (with MPCA) \\
+ & & $1 \times 10^{-10}$ (with $q$G)\\
+ & \multirow{2}{*}{$N_{FE}^{hj}$} & $100000$ (with MPCA) \\
+ & & $30000$ (with $q$G) \\
+\hline
+\end{tabular}
+\end{table}
+
+\autoref{fig:resultstruss} shows the results for the estimated damage parameters for four cases: noiseless data, and noisy data with $\sigma = 0.02$, $\sigma = 0.05$, and $\sigma = 0.10$. White bars show the damage in the elements. In this experiments, all the algorithms obtained similar results. All the damages were identified. Almost perfect damage estimation was obtained for noiseless data. With the 2\% and 5\% noisy data the results were getting worse. Finally, for the noisy data with 10\%, some false positive appeared in the $1^{st}$ and $6^{th}$ elements. For the $4^{th}$ element and the $12^{th}$ elements, the damage was overestimated, with a difference of about 10\% of damage or more.
+
+\pgfplotstableread{data/chapter5_resultsEngOpt.csv}{\loaddataEngOpt}
+\pgfplotstableread{data/chapter5_truss12.csv}{\loaddataqgtruss}
+
+\begin{figure}[H]
+\caption{Results using MPCA-HJ, CBMPCA-HJ, RBSMPCA-HJ, and $q$G-HJ on the case study 4}
+\label{fig:resultstruss}
+\centering
+\includegraphics{images/chapter5_truss12noise0_hj.tikz}
+\includegraphics{images/chapter5_truss12_noise2.tikz}
+\includegraphics{images/chapter5_truss12_noise5.tikz}
+\includegraphics{images/chapter5_truss12_noise10.tikz}
+\end{figure}
+
+\section{Case Study 5: Damage identification in a model of the International Space Station}
+
+The results in this section were presented at the 10th International Conference on Composite Science and Technology \cite{HernandezTorres2015b} \textit{and sent to the Applied Mathematics and Computation journal}.
+
+\autoref{fig:iss} shows a truss structure with 72 bars, which has the simplified shape of the International Space Station (ISS). The inferior extreme is fixed for simulating the dynamic response, resulting in a total of 68-DOF.
+
+\begin{figure}[H]
+    \caption{Case study 5: Truss with 72 bars}
+    \label{fig:iss}
+    \centering    
+    \resizebox{0.65\columnwidth}{!}{\includegraphics{images/chapter5_iss.tikz}}
+\end{figure}
+
+\autoref{tab:iss} presents the material properties of the structure. The damping matrix is assumed proportional to the mass matrix $C = 1.7\times 10^{-1}M$. External forces are applied to the nodes A and B, in the positive diagonal direction with components $F_x(1) = 10~N$, $F_y(1) = 5~N$, $F_x(2) = 10~N$ and $F_y(2) = 20~N$. For the numerical simulations, the time step $\Delta t = 5 \times 10^{-2}~s$ and the final time is \mbox{$t_f = 5.0~s$}.
+
+Initial conditions for displacement and velocity are equal to zero ($u(0) = 0, \dot u(0) = 0$).
+
+\begin{table}[H]
+\caption{Material properties for case study 4}
+\label{tab:iss}
+\centering
+\footnotesize
+\begin{tabular}{ll}
+\hline
+Property & Value\\
+\hline
+Element type & Bars \\
+Material &  Aluminium\\
+Young’s modulus ($E$) & $70~GPa$ \\
+Material density ($\rho$) & $2700~kg/m^3$\\
+Square cross section area ($A$) & $8.0 \times 10^{-3}~m^2$ \\
+Non-diagonal elements length ($l_{_{non-diagonal}}$) & $6.0~m$ \\
+Diagonal elements length ($l_{_{diagonal}}$) & $8.485~m$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\autoref{tab:param_iss} shows the stopping criteria and the control parameters of the $q$G, MPCA and HJ methods. The maximum number of function evaluations for each hybrid approach ($q$G-HJ or MPCA-HJ) is 1000000 with 900000 for the global optimization method ($q$G or MPCA), and 100000 for the local optimization method (HJ). For the HJ method, the iterative procedure stops if either the minimum step ($h_{min}$) or the maximum number of function evaluations ($N_{FE}^{hj}$) is reached.
+
+In these experiments, the best solution known (the undamaged configuration) is injected to the initial population. One candidate solution is initialized with those integral values (\textit{i.e.} all values as 100\%), while the others solutions are initialized randomly.
+
+\begin{table}[H]
+\caption{Control parameters and stopping criteria for $q$G, MPCA and HJ methods}
+\label{tab:param_iss}
+\footnotesize
+\centering
+\begin{tabular}{ccc}
+\hline
+Algorithm & Parameter & Value \\
+\hline
+\multirow{4}{*}{$q$G} & $\sigma^0$ & $0.2 \cdot L$\\
+ & $\alpha^0$ & $0.1 \cdot L$\\
+ & $\beta$ & $0.999$\\
+ & $N_{FE}^{qG}$ & $900000$ \\
+ \hline
+\multirow{5}{*}{MPCA} & $N_{particles}$ & $10$ \\
+\\[-0.7em]
+& $N_{FE}^{blackboard}$ & $1000$ \\
+\\[-0.7em]
+ & $R^{inf}$ & $0.7$ \\
+ & $R^{sup}$ & $1.1$ \\
+ & $N_{FE}^{mpca}$ & $900000$ \\
+ \\[-0.7em]
+\hline
+\multirow{3}{*}{HJ} & $\rho $ & $0.8$ \\
+ & $h_{min}$ & $1 \times 10^{-10}$ \\
+ & $N_{FE}^{hj}$ & $100000$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\begin{center}
+
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68
+    damage 0 0 0 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 20 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    mpca 0.00    -0.57    0.26    9.63    1.40    -0.04    0.00    0.00    0.00    0.00    -0.01    -0.06    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    -0.01    0.00    0.08    0.04    0.00    0.00    0.00    0.00    0.09    -0.04    0.00    0.35    0.01    0.00    0.00    -0.04    0.00    0.03    0.00    0.44    0.00    -0.03    0.00    0.00    0.00    20.00    0.00    0.00    -0.02    0.00    0.15    0.00    0.00    0.00    0.00    -0.03    0.00    -0.01    -0.01    0.10    0.03    0.03    0.00    0.00    0.05    -1.04    -0.06
+    qg 0.00    0.14    -1.34    9.05    3.76    -0.49    0.02    -0.03    0.00    0.56    -0.23    0.62    0.23    0.09    0.00    0.00    0.00    0.00    0.00    -0.10    0.00    0.26    -0.19    0.35    0.73    -0.01    0.04    -0.03    -0.03    1.42    -0.66    -0.80    1.05    -0.37    0.00    0.02    -0.12    -0.05    0.55    -0.13    -0.62    0.04    3.93    -0.04    0.12    0.02    19.97    0.01    -0.19    -0.21    -0.01    -0.28    -0.01    0.01    -0.05    -0.07    -0.33    -0.02    0.46    0.10    0.72    3.00    -0.16    -0.01    0.03    0.68    -0.61    -0.17
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+      
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=4pt,
+        enlargelimits=0.01,
+        xmin = 1,
+        xmax = 68,
+        ymin = -4,
+        ymax = 22,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!10},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick={1,...,68},
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        x tick label style={rotate=90,anchor=east},
+        every axis/.append style={font=\tiny},
+        legend entries={Real},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+table[x index=0,y index=1] \dataset;
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=4pt,
+        enlargelimits=0.01,
+        xmin = 1,
+        xmax = 68,
+        ymin = -4,
+        ymax = 22,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!10},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick={1,...,68},
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        x tick label style={rotate=90,anchor=east},
+        every axis/.append style={font=\tiny},
+        legend entries={RBSMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+table[x index=0,y index=2] \dataset;
+\end{axis}
+\end{tikzpicture}
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=4pt,
+        enlargelimits=0.01
+        ,
+        xmin = 1,
+        xmax = 68,
+        ymin = -4,
+        ymax = 22,
+        ymajorgrids,
+        xminorgrids,
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!10},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick={1,...,68},
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        x tick label style={rotate=90,anchor=east},
+        every axis/.append style={font=\tiny},
+        legend entries={$q$G-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+table[x index=0,y index=3] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\section{Case study 2: Kabe's problem}
+\label{sec:cs2}
+
+The results in this section will be presented in the \textit{XXXVII Congresso Nacional de Matem\'atica Aplicada e Computacional} (CNMAC 2017) - \cite{hernandez2017}.
+
+The method is tested on a mass-spring system called Kabe's Problem \cite{kabe1985stiffness}. This system has 8-DOF, and 14 springs with a distribution as shown in \autoref{fig:kabe}. This problem was first used as a test to be updated by Kabe's Stiffness Matrix Adjustment (KMA) method \cite{atalla1996}.
+
+\begin{figure}[H]
+\caption{Case study 2: Kabe's Problem}
+\label{fig:kabe}
+\centering
+\resizebox{0.55\linewidth}{!}{\includegraphics{images/chapter5_kabe.tikz}}
+\end{figure}
+
+Dimensionless values for the masses and stiffness are shown in \autoref{tab:values}.
+
+\begin{table}[H]
+    \caption{Dimensionless mass and stiffness for the case study 2}
+    \label{tab:values}
+    \footnotesize
+    \centering
+    \begin{tabular}{ccccccccc}
+        \hline
+         $k_{1,8}$ & $k_{2, 6}$ & $k_{3-5}$ & $k_7$ & $k_{9,11,12,14}$ & $k_{10,13}$ & $m_{1}$ & $m_{2-7}$ & $m_{8}$  \\
+        \hline
+        1.5 & 10 & 100 & 2 & 1000 & 900 & 0.001 & 1 & 0.002 \\
+        \hline
+        \\
+    \end{tabular}
+\end{table}
+
+This system has some peculiarities that make it a challenge: there are large differences between the magnitude of the stiffness of the elements (from 1.5 to 1000), and the system has a very high modal density. All eight natural frequencies have a small difference between them, within 27\% of each other.
+
+Experiments were done on noiseless data, and noisy data with a 5\%, both generated synthetically running the direct model. Elements 4 and 7 are simulated as damaged, each one with 10\% of stiffness reduction.
+
+The experiments were done on a PC with $4\times$ Intel\textregistered\, Core\texttrademark\, i7-6500U CPU @ 2.50GHz, with 16 GB of memory, operating with Ubuntu 16.04.2 LTS.
+
+The number of runs was set in 25. In \autoref{tab:param_kabe} are shown the control parameters for the RBSMPCA-HJ.
+
+\begin{table}[H]
+\caption{Control parameters for RBSMPCA-HJ for case study 2}
+\label{tab:param_kabe}
+\footnotesize
+\centering
+\begin{tabular}{ccc}
+\hline
+Algorithm & Parameter & Value \\
+\hline
+\multirow{5}{*}{MPCA} & $N_{particles}$ & $10$ \\
+\\[-0.7em]
+& $N_{FE}^{mpca}$ & $10000$ \\
+\\[-0.7em]
+ & $N_{FE}^{blackboard}$ & $10000$ \\
+ \\[-0.7em]
+ & $N_{FE}^{exploitation}$ & $1000$ \\
+ & $R^{inf}$ & $0.7$ \\
+ & $R^{sup}$ & $1.1$ \\
+\hline
+\multirow{2}{*}{RBS} & $\beta_0$ & $3.14$~rad \\
+ & $\delta$ & $0.25$ \\
+\hline
+\multirow{3}{*}{HJ} & $h_{min}$ & $1 \times 10^{-11}$ \\
+ & $\rho $ & $0.8$ \\
+ & $N_{FE}^{hj}$ & $10000$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\autoref{fig:mean} shows the average of the damages parameters on the noiseless data. Results are perfect in comparison with the original damage.
+
+\begin{figure}[H]
+\caption{Results using RBSMPCA-HJ on the case study 2 - Mean for 25 experiments on noiseless data}
+\label{fig:mean}
+\centering
+\begin{tikzpicture}
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+    damage  0 0 0 10 0 0 10 0 0 0 0 0 0 0 
+    mpca    0 0 0 10 0 0 10 0 0 0 0 0 0 0
+    mpca5 1.4936 -0.0548    -0.1108    11.5316    -1.072    11.6868    9.9176    0.0488    0.2144    0.074    0.0388    1.1776    0.0536    -0.0416
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+    
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 14,
+        ymin = -1,
+        ymax = 13,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, RBSMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=armygreen]
+table[x index=0,y index=2] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\autoref{fig:boxplot} shows the boxplot, and the \autoref{tab:statistics} presents the mean and median for the damages for 25 experiments on the noisy data. Both damages were well estimated. For the fifth and the sixth springs appeared a dispersion in the estimations, but medians are low for both cases: 0.08 and 1.12, respectively. The mean for the sixth is affected by three outliers that appeared with values of 50\%.
+
+\begin{table}[H]
+    \caption{Mean and median of the damages estimated on case study 2 for the experiments on the noisy data}
+    \label{tab:statistics}
+    \centering
+    \scriptsize
+    \begin{tabular}{ccccccccccccccc}
+        \hline
+         & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14  \\
+         \hline
+         Mean & 0.49 & -0.04 &-0.01 & 8.9 & -0.15 & 8.4 & 10.1 & -0.09 & 0.21 & 0.18 & -0.41 & 0.37 & 0.10 & -0.07\\
+         Median & -0.01 & 0 & -0.01 & 10 & 0.08 & 1.1 & 10.0 & -0.02 & 0.05 & 0.03 & -0.09 & 0.09 & 0.08 & -0.06\\
+        \hline
+    \end{tabular}
+\end{table}
+
+\pgfplotsset{
+    every non boxed x axis/.style={} 
+}
+
+\pgfplotstableread{data/chapter5_table.csv}\dataset
+
+\begin{figure}[H]
+\caption{Results using RBSMPCA-HJ on the case study 2 - Boxplot for 25 experiments on noisy data}
+\label{fig:boxplot}
+ \centering
+ \begin{tikzpicture}
+        \begin{groupplot}[
+        group style={
+        group name=my fancy plots,
+        group size=1 by 2,
+        xticklabels at=edge bottom,
+        vertical sep=0pt
+        },
+        width=\textwidth,
+        height=10.5cm,
+        xmin = 0.5,
+        xmax = 14.5,
+        try min ticks=1,
+        xlabel={\footnotesize Spring},
+        boxplot/draw direction=y,
+        xtick={1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
+        boxplot/every box/.style={fill=white}]
+
+        \nextgroupplot[
+            ymin=46,ymax=52,
+            ytick=50,
+            axis y discontinuity=crunch,
+            axis x line=top,
+            xlabel={},
+            height=2.5cm]
+            \foreach \i in {0,...,13} {
+            \addplot [boxplot, mark=x] table [y index=\i] {\dataset};}
+        \nextgroupplot[ymin=-6,ymax=13,
+            ytick={-6,-4,..., 12},
+            axis x line=bottom,
+            height=6.5cm,
+            ylabel={\footnotesize Damage}]               
+            \foreach \i in {0,...,13} {
+            \addplot [boxplot, mark=x] table [y index=\i] {\dataset};}            
+        \end{groupplot}
+    \end{tikzpicture}
+    \vspace{-6em}
+\end{figure}
+
+\section{Case Study 3: Yang' problem}
+
+The method is also tested over a 15-DOF damped discrete system called Yang's Problem \apud{ATALLA1998135}{yang1996improved}, shown in \autoref{fig:yang}. The system has repeated modes and a high modal density, becoming a complex system. \autoref{tab:valuesyang} shows the nominal parameters for the model, taken from \citeonline{ATALLA1998135}.
+
+\begin{table}[H]
+    \caption{Mass and stiffness values for the case study 3}
+    \label{tab:valuesyang}
+    \footnotesize
+    \centering
+    \begin{tabular}{ccccccccc}
+        \hline
+         $k_{1-18}$ & $k_{19}$ & $k_{20}$ & $k_{21}$ & $k_{22}$ & $m_{1-10}$ & $m_{11-15}$ & $c_{1-12}$ & $c_{13-22}$  \\
+        \hline
+        175127 & 192639 & 157614 & 210152 & 140101 & 0.01175 & 0.00059 & 17.5127 & 1.57127 \\
+        \hline
+        \\
+    \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\caption{Case study 3: Yang's Problem}
+\label{fig:yang}
+\centering
+\resizebox{0.37\linewidth}{!}{\includegraphics{images/chapter5_yang.tikz}}
+\end{figure}
+
+The configuration of the hybrid algorithm is identical to that set in \autoref{sec:cs2}.
+
+\autoref{fig:resultsyang} shows the mean of the damage parameters for 25 experiments using the noiseless data. RBSMPCA-HJ could estimate all the damages in the structure, although the results are not perfect. For $q$G-HJ, a false positive appeared in the $16^{th}$ element, and in the $15^{th}$ element the damage was overestimated.
+
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
+    damage 0 0 0 10 0 0 0 0 15 0 0 20 0 0 5 0 0 0 0 5 0 0
+    mpca 0.19    0.23    0.38    10.37    0.43    0.59    -0.08    0.00    14.60    -0.36    -0.70    19.36    0.11    0.05    4.95    0.01    -0.03    0.00    -1.05    4.39    -1.40    0.05
+    qg -0.79    -0.46    -0.96    8.20    0.54    2.89    0.43    0.10    16.74    0.64    -0.02    17.40    -1.29    -0.93    11.15    4.99    -0.63    -1.00    -0.18    2.34    1.85    -1.92
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+
+\begin{figure}[H]
+\caption{Results using RBSMPCA-HJ and $q$G-HJ on the case study 3 - Mean for 25 experiments on noiseless data}
+\label{fig:resultsyang}
+\begin{center}    
+\begin{tikzpicture}  
+  \centering  
+  \begin{axis}[ybar,   
+        width=\textwidth,
+        height=6.5cm,
+        bar width=3pt,
+        enlargelimits=0.02,
+        xmin = 0.5,
+        xmax = 22.5,
+        ymin = -6,
+        ymax = 24,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Real,RBSMPCA-HJ,$q$G-HJ},
+        legend columns=4,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+    \addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x index=0,y index=1] \dataset;
+    \addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x index=0,y index=2] \dataset;
+    \addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+        table[x index=0,y index=3] \dataset;
+  \end{axis}  
+  \end{tikzpicture} 
+  \end{center}
+\end{figure}
+
+\section{Case Study 6: Damage identification in a cantilevered beam}
+
+The results in this section will be published in the book Computational Intelligence in Engineering Problems \cite{hernandez2017a}.
+
+The cantilevered beam shown in \autoref{fig:beam} is modeled with ten beam finite elements. It is clamped at the left end, and each aluminum beam element, with $\rho = 2700~kg/m^3$ and $E = 70~GPa$, has a constant rectangular cross section area with $b = 15 \times 10^{-3}~m$ and $h = 6 \times 10^{-3}~m$, a total length $l = 0.43~m$, and a inertial moment $I = 3.375 \times 10^{-11}~m^4$. The damping matrix is assumed proportional to the undamaged stiffness matrix $C = 10^{-3}K$. An external varying force $F(t) = 5.0 \times 2.0 \sin(\pi t)~N$ is applied to the tenth element, in the free extreme of the beam.
+    
+Initial conditions for displacement and velocity are equal to zero: 
+%
+\begin{align}
+    u(0) &= 0 \\
+    \dot u(0) &= 0.
+\end{align}
+
+For the experiments, the numerical simulation was performed assuming $t_f = 2s$, with a time step $\Delta t = 4\times 10^{-3}s$.
+
+Synthetic data were taken from the nodes of the structure, by simulating of the forward model of the beam structure. In real life, displacements could be measured by strain-gages, while rotations could be measured by rotation rate sensors or gyroscopes \cite{Zembaty2016}.
+
+Three cases are tested: noiseless data, noisy data with $\sigma = 0.02$, and noisy data with $\sigma = 0.05$.
+
+\begin{figure}[H]
+\caption{Case study 6: Cantilever Beam structure}
+\label{fig:beam}
+\centering
+\includegraphics{images/chapter5_beam.tikz}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Case study 6: Beam model with 20-DOF}
+\label{fig:beam20}
+\centering
+\includegraphics{images/chapter5_beamelements.tikz}
+\end{figure}
+
+\autoref{tab:param_beam} shows the configuration used for the algorithm RBSMPCA-HJ.
+
+\begin{table}[H]
+\caption{Control parameters and stopping criteria for RBSMPCA-HJ}
+\label{tab:param_beam}
+\footnotesize
+\centering
+\begin{tabular}{ccc}
+\hline
+Algorithm & Parameter & Value \\
+\hline
+\multirow{5}{*}{MPCA} & $N_{\mathrm{particles}}$ & $20$ \\
+\\[-0.7em]
+& $N_{FE}^{blackboard}$ & $10000$ \\
+\\[-0.7em]
+ & $R^{inf}$ & $0.7$ \\
+ & $R^{sup}$ & $1.1$ \\
+ & $N_{FE}^{mpca}$ & $200000$ \\
+ \\[-0.7em]
+\hline
+\multirow{2}{*}{RBS} & $\beta_0$ & $3.14$~rad \\
+& $\delta$ & $0.25$ \\
+\hline
+\multirow{3}{*}{HJ} & $\rho $ & $0.8$ \\
+ & $h_{\mathrm{min}}$ & $1 \times 10^{-11}$ \\
+ & $N_{FE}^{hj}$ & $100000$ \\
+\hline
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%
+
+\subsection{Experimental results: Damage identification from a full dataset}
+
+In the first set of experiments, observed data were taken from all nodes, with a total of 20 time series with 500 points each one. For the analysis in each case, it was calculated the mean of 15 runs of the inverse solution.
+
+\subsubsection{Subcase 1: Single damage}
+
+In the subcase 1, a single damage of 10\% was simulated on the first element of the structure, maintaining the others elements without changes.
+
+\autoref{fig:beam1} shows results for the identification process. The damage was well estimated in all experiments. In the experiments with noisy data, MPCA-HJ identified a little damage of less than 1\% in the $10^{th}$ element, while RBMPCA-HJ identified a negative damage in this element, which represents an increase of the stiffness, in this problem not feasible.
+
+\subsubsection{Subcase 2: Mixed multi-damage}
+\label{sec:mixed}
+
+In the subcase 2, a damage configuration of 10\% on the $2^{nd}$ element; 20\% on the $4^{th}$; 30\% on the $6^{th}$, 5\% on the $9^{th}$ element, and 10\% in the $10^{th}$ element was set. The remaining elements are assumed as undamaged.
+
+\autoref{fig:beam2} shows the results. All the damages were well identified in all experiments. For the $10^{th}$ element, some error was detected. It is important to highlight that in two runs with $\sigma=0.02$, the MPCA-HJ missed the damage in the $10^{th}$ element.
+
+% \begin{table}[H]
+%     \centering
+%     \scriptsize
+%     \begin{tabular}{ccccc}
+%         \hline
+%         Case & Algorithm & Noiseless data & Noisy data ($\sigma = 0.02$) & Noisy data ($\sigma = 0.05$) \\
+%         \hline
+%         1 & MPCA-HJ (1) &  $285284.3 \pm 43935.2$ & $260992.7 \pm 27773.1$ & $266580.1 \pm 33744.3$\\
+%         & RBMPCA-HJ (2) & $299007.1 \pm 45498.3$ & $ 274809.3 \pm 32886.7$ &$271345.3 \pm 33169.1$\\ 
+%         & Difference (1) - (2) & -13722.7 & -13816.6 & -4765.2\\
+%         \hline
+%         2 & MPCA-HJ (1) &  $299952.3 \pm 33660.0$ & $277116.3 \pm 33478.3$ & $274124.7 \pm 49482.1$\\
+%         & RBMPCA-HJ (2) & $293025.7 \pm 39614.2$ & $248968.7 \pm 35335.3$ & $268660.2 \pm 37766.2$\\ 
+%         & Difference (1) - (2) & 6926.6 & 28147.6 & 5464.5\\
+%         \hline
+%     \end{tabular}
+%     \caption{Number of function evaluations for solving the SDI problem in the Case 2}
+%     \label{tab:nfe1}
+% \end{table}
+
+\subsection{Experimental results: Damage identification from a incomplete dataset}
+
+In the second set of experiments, observed data were taken from some degrees of freedom: displacements from node 2 and node 10, and rotation from node 5 and node 10. In total, in this case, there are four time-series with 500 points each one. For the analysis in each case, it was calculated the mean of 15 runs of the inverse solution.
+
+\subsubsection{Subcase 3: Single damage}
+
+Similar to the experiments with a full dataset, in this case, a single damage of 10\% was simulated on the first element, maintaining the others elements undamaged.
+
+\autoref{fig:beam3} shows the means of the estimated damage parameters. For the noiseless data, the damage was well identified and none false damage appeared.
+
+For the experiments with $\sigma = 0.02$, MPCA-HJ launched a false alarm for the element 10. In three experiments, the algorithm found a damage of about 10\%, and in another experiment identified a damage of 20\%. RBMPCA-HJ detected a false alarm for the $10^{th}$ element just in two single runs. In the others elements, some errors were detected, most of them are negative.
+
+For the experiments with $\sigma = 0.05$, it is noticeable that in the $9^{th}$ element a negative damage was identified for both algorithms. Both algorithms detected negligible damages for the other elements. It is important to highlight the increasing level of variation for the results, caused by the noise.
+
+\subsubsection{Subcase 4: Mixed multi-damage}
+
+In this subcase, the same damage configuration of the \autoref{sec:mixed} was used.
+
+\autoref{fig:beam4} shows the results for the damage identification. All the damages were detected. In the $6^{th}$ and $9^{th}$ elements, the damage values were well estimated, with a small error. The estimated damage in the $2^{nd}$, $4^{th}$, and $10^{th}$ have an error of about 5\% around the real value. In the $3^{rd}$ element appeared a false alarm with a damage of about 5\%.
+
+For the experiments with $\sigma = 0.02$, the 5\% damage at the $9^{th}$ element and the 10\% at the $2^{nd}$ element were not well identified being confused with those errors that appear caused by the presence of the noise. The damage in the $4^{th}$ element was detected, but with an error greater than 5\%. In the other hand, the damages at the $6^{th}$ and $10^{th}$ were detected, and the values have an error of less than 5\%. Again, a false alarm appeared at the $3^{rd}$ element.
+
+For the experiments with $\sigma = 0.05$, the results are equivalent to those achieved with $\sigma = 0.02$. The damage at the $9^{th}$ element was overshadowed by the effects of the noise. In the $3^{rd}$ element, which is undamaged, damage equal to the estimated in the $4^{th}$ element was estimated, which has a damage of 20\%. Also, false alarms appeared for the $5^{th}$ and the $7^{th}$ elements.
+
+\begin{figure}[H]
+\caption{Results for the MPCA-HJ and RBSMPCA-HJ on the case study 6 using a full dataset - Single damage in the fixed element}
+\label{fig:beam1}
+\begin{center}
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10
+    damage 10 0 0 0 0 0 0 0 0 0 
+    mpca 10 0 0 0 0 0 0 0 0 0 
+    mpcastd 0 0 0 0 0 0 0 0 0 0 
+    rbs 10 0 0 0 0 0 0 0 0 0 
+    rbsstd 0 0 0 0 0 0 0 0 0 0 
+    mpmca2 10.00    0.01    -0.02    0.00    -0.01    -0.03    0.07    -0.03    0.01    0.53
+    mpca2std 0.03    0.06    0.06    0.07    0.11    0.11    0.25    0.25    0.45    1.84
+    rbs2 9.99    0.01    0.02    -0.02    0.01    -0.03    -0.01    0.06    0.04    -0.39
+    rbs2std 0.04    0.08    0.08    0.11    0.10    0.14    0.20    0.32    0.40    1.33
+    mpca5 10.00    -0.01    0.00    -0.04    -0.03    0.12    0.04    -0.02    -0.20    1.33
+    mpca5std 0.08    0.14    0.21    0.18    0.23    0.25    0.37    0.60    1.50    2.72 
+    rbs5 9.96    0.09    0.00    -0.06    0.02    0.08    -0.07    -0.25    0.23    -0.83
+    rbs5std 0.07    0.12    0.14    0.16    0.23    0.35    0.41    0.37    1.00    3.45
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+      
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -2.5,
+        ymax = 11,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 1 - Noiseless data},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north east}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=2,y error index=3] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=4,y error index=5] \dataset;
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -2.5,
+        ymax = 11,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 1 - Noisy data with $\sigma = 0.02$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north east}
+    ]
+    
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=6,y error index=7] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=8,y error index=9] \dataset;
+\end{axis}
+\end{tikzpicture}
+\vspace{1em}
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -2.5,
+        ymax = 11,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 1 - Noisy data with $\sigma = 0.05$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north east}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=10,y error index=11] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=12,y error index=13] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+\caption{Results for the MPCA-HJ and RBSMPCA-HJ on the case study 6 using a full dataset - Configuration with mixed damages}
+\label{fig:beam2}
+\begin{center}
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10
+    damage 0 10 0 20 0 30 0 0 5 10 
+    mpca 0.00    9.99    0.02    19.99    0.00    30.00    0.00    0.00    5.00    10.00
+    mpcastd    0.01    0.03    0.07    0.03    0.02    0.01    0.00    0.01    0.01    0.02
+    rbs 0.01    9.98    0.02    20.00    -0.04    30.01    -0.01    0.01    5.00    9.98
+    rbsstd 0.04    0.05    0.05    0.03    0.10    0.03    0.02    0.03    0.01    0.05
+    mpmca2 0.01    9.97    0.05    19.99    0.00    30.01    -0.07    0.07    5.29    8.33
+    mpca2std 0.06    0.07    0.06    0.06    0.06    0.05    0.23    0.27    0.61    3.21
+    rbs2 -0.01    10.01    -0.01    20.00    0.00    30.02    -0.08    -0.02    5.12    10.33
+    rbs2std 0.05    0.07    0.06    0.04    0.12    0.07    0.22    0.25    0.36    0.87
+    mpca5 -0.02    10.03    0.01    19.99    -0.07    30.04    -0.12    0.32    4.63    10.34
+    mpca5std 0.08    0.12    0.23    0.16    0.23    0.19    0.46    0.61    1.25    2.95
+    rbs5 0.03    9.94    0.02    20.04    -0.02    30.00    0.09    -0.10    5.20    8.42
+    rbs5std 0.08    0.12    0.19    0.15    0.25    0.11    0.42    0.65    1.12    3.52
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+      
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -5,
+        ymax = 35,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 2 - Noiseless data},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=2,y error index=3] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=4,y error index=5] \dataset;
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -5,
+        ymax = 35,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 2 - Noisy data with $\sigma = 0.02$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=6,y error index=7] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=8,y error index=9] \dataset;
+\end{axis}
+\end{tikzpicture}
+\vspace{1em}
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -5,
+        ymax = 35,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 2 - Noisy data with $\sigma = 0.05$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=10,y error index=11] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=12,y error index=13] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Results for the MPCA-HJ and RBSMPCA-HJ on the case study 6 using a dataset few time series - Single damage in the fixed element}
+\label{fig:beam3}
+\centering
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10
+    damage 10 0 0 0 0 0 0 0 0 0 
+    mpca 9.99    0.03    -0.01    -0.03    0.02    -0.01    0.03    0.01    -0.12    0.18
+    mpcastd 0.00    0.01    0.04    0.06    0.03    0.02    0.05    0.08    0.15    0.29
+    rbs 9.99    0.03    -0.01    -0.03    0.02    0.00    0.02    -0.04    -0.05    0.18
+    rbsstd 0.01    0.01    0.04    0.06    0.03    0.05    0.09    0.12    0.16    0.26
+    mpca2 9.97    0.07    -0.61    0.86    -0.45    0.26    0.23    -2.04    -0.96    4.38
+    mpca2std 0.06    1.20    2.25    2.48    2.27    2.97    4.23    3.72    4.67    8.27
+    rbs2 9.98    0.04    -0.08    -0.14    0.01    0.09    -0.33    -0.15    -1.07    1.74
+    rbs2std 0.08    0.72    2.09    3.41    2.40    2.36    3.72    4.61    4.08    8.27
+    mpca5 9.86    1.12    -1.65    -0.52    1.03    -0.23    1.22    -0.58    -3.39    1.08
+    mpca5std 0.29    1.05    2.79    3.29    2.00    3.99    5.43    4.65    4.32    8.14    
+    rbs5 10.05    0.13    -0.86    0.82    -0.62    -0.83    0.70    1.10    -2.65    -0.90
+    rbs5std 0.35    1.64    3.38    3.96    3.07    2.77    4.95    5.55    3.35    7.15
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+      
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -4.5,
+        ymax = 12,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 3 - Noiseless data},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north east}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=2,y error index=3] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=4,y error index=5] \dataset;
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -4.5,
+        ymax = 12,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 3 - Noisy data with $\sigma = 0.02$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north east}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=6,y error index=7] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=8,y error index=9] \dataset;
+\end{axis}
+\end{tikzpicture}
+\vspace{1em}
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -4.5,
+        ymax = 12,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 3 - Noisy data with $\sigma = 0.05$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north east}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=10,y error index=11] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=12,y error index=13] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Results for the MPCA-HJ and RBSMPCA-HJ on the case study 6 using a dataset few time series - Configuration with mixed damages}
+\label{fig:beam4}
+\centering
+\pgfplotstableread{%
+    element 1 2 3 4 5 6 7 8 9 10
+    damage 0 10 0 20 0 30 0 0 5 10 
+    mpca 1.38    5.37    6.37    16.10    1.32    29.55    0.18    2.07    4.12    5.81
+    mpcastd 1.53    5.54    7.64    6.22    2.46    1.21    3.94    5.27    5.32    6.85
+    rbs 1.31    5.75    5.28    17.55    0.65    29.72    0.07    1.02    5.80    5.32
+    rbsstd 1.76    5.80    6.95    3.32    0.91    0.63    2.82    4.45    3.26    6.08
+    mpmca2 1.57    3.60    10.04    13.17    2.30    28.37    4.07    -1.27    3.54    5.47
+    mpca2std 2.18    6.22    7.85    6.83    3.23    3.87    10.18    4.52    6.50    12.29
+    rbs2 1.96    2.89    9.52    14.61    1.50    29.07    1.64    2.14    1.08    8.07
+    rbs2std 2.29    6.71    7.62    5.86    3.99    2.37    6.67    5.79    3.96    11.72
+    mpca5 -0.18    7.06    8.79    9.62    4.33    28.24    3.36    0.70    1.03    6.74
+    mpca5std 3.34    7.93    9.63    10.73    6.59    4.25    10.73    6.72    7.31    13.99
+    rbs5 0.63    4.61    11.30    9.28    3.72    27.23    5.51    0.67    0.15    3.81
+    rbs5std 2.87    8.13    10.13    9.10    6.33    5.27    12.13    7.74    7.64    13.99
+    }\datatable
+    \pgfplotstabletranspose[colnames from=element]\dataset{\datatable}
+      
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -6,
+        ymax = 35,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 4 - Noiseless data},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=2,y error index=3] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=4,y error index=5] \dataset;
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -6,
+        ymax = 35,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 4 - Noisy data with $\sigma = 0.02$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=6,y error index=7] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=8,y error index=9] \dataset;
+\end{axis}
+\end{tikzpicture}
+\vspace{1em}
+\begin{tikzpicture}
+\begin{axis}[
+        ybar,   
+        width=\textwidth,
+        height=0.3\textheight,
+        bar width=5pt,
+        enlargelimits=0.05,
+        xmin = 1,
+        xmax = 10,
+        ymin = -6,
+        ymax = 35,
+        ymajorgrids,
+        xminorgrids={true},
+        minor x tick num=1,
+        major grid style={line width=.2pt,draw=gray!50},
+        minor grid style={line width=.2pt,draw=gray!50, dashed},
+        title={Subcase 4 - Noisy data with $\sigma = 0.05$},
+        ylabel={$\Theta^{\rm d}$},
+        ylabel shift = 1 pt,
+        xlabel={\footnotesize Element},
+        xtick=data,
+        ytick={0,10,20,30,40},
+        restrict y to domain*=-5:40,
+        nodes near coords align={horizontal},
+        every node near coord/.append style={
+            yshift=3pt,
+            rotate=90,
+            font=\tiny,
+            xshift=-3pt,
+            yshift=0pt,
+            /pgf/number format/fixed
+        },
+        every axis y label/.style={
+            at={(ticklabel* cs:1.05)},
+            anchor=south,
+        },
+        every axis/.append style={
+            font=\scriptsize
+        },
+        legend entries={Damage, MPCA-HJ, RBMPCA-HJ},
+        legend columns=5,
+        legend style={draw=none,font=\scriptsize},
+        legend style={fill=none},
+        legend pos= {north west}
+    ]
+        
+\addplot[draw=black,fill=white,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=1] \dataset;
+\addplot[draw=black,fill=yaleblue,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=10,y error index=11] \dataset;
+\addplot[draw=black,fill=armygreen,nodes near coords=\pgfmathprintnumber{\pgfplotspointmeta},
+        /pgf/number format/precision=1]
+%plot [error bars/.cd, y dir = both, y explicit]
+table[x index=0,y index=12,y error index=13] \dataset;
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\section{Chapter conclusions}

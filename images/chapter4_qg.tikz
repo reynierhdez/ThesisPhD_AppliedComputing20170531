@@ -1,0 +1,36 @@
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node (start) [startstop] {Start};
+
+\node (in1) [io, right of=start, xshift=4cm, align=center] {\begin{varwidth}{4cm}$s$, $\sigma$, $\alpha$, $\beta$\end{varwidth}};
+
+\node (dec1) [decision, below of=in1, yshift=-1.cm] {Stopping criteria met?};
+
+\node (pro2) [process, below of=dec1, yshift=-2cm]  {\begin{varwidth}{8cm}\centering Generate $qs$ by $\mathcal{N} (s, \sigma)$
+\\\vspace{1em} Calculate the $q$-gradient $\nabla_q J(s)$ \\ \vspace{1em} $v = - \dfrac{\nabla_q J(s)}{\| \nabla_q J(s) \|}$ \end{varwidth}};
+
+\node (pro5) [process, below of=pro2,yshift=-1.5cm]  {$s = s + \alpha v$};
+
+\node (dec2) [decision, below of=pro5, yshift=-0.75cm] {$J(s) < J(s^b)$};
+
+\node (pro6) [process, below of=dec2, yshift=-0.75cm] {$s^b = s$};
+\node (pro7) [process, right of=dec2, xshift=4.5cm] {\begin{varwidth}{4.5cm} \centering $\sigma = \beta \sigma$ \\ $\alpha = \beta \alpha$ \end{varwidth}};
+
+\node (out1) [io, below of=start, yshift=-3.5cm] {Return $s^b$};
+\node (stop) [startstop, below of=out1, yshift=-0.5cm] {Stop};
+
+\draw [arrow] (start) -- (in1);
+\draw [arrow] (in1) -- (dec1);
+\draw [arrow] (dec1) -- node[anchor=east] {no} (pro2);
+\draw [arrow] (dec1.west) node[anchor=south east] {yes} -|  (out1.north);
+\draw [arrow] (pro2) -- (pro5);
+%\draw [arrow] (pro3) -- (pro4);
+%\draw [arrow] (pro4) -- (pro5);
+\draw [arrow] (pro5) -- (dec2);
+\draw [arrow] (out1) -- (stop);
+\draw [arrow] (dec2) -- node[anchor=east] {yes} (pro6);
+\draw [arrow] (dec2) -- node[anchor=south] {no} (pro7);
+\draw [arrow] (pro6.south) |- ([xshift=0.5cm,yshift=-0.5cm]pro6.south east) -| (pro7.south);
+\draw [arrow] (pro7) |- ([xshift=0.0cm,yshift=0.5cm]dec1.north);
+
+\end{tikzpicture}

@@ -1,0 +1,39 @@
+\begin{tikzpicture}[scale=0.010]
+
+\begin{scope}
+\input{images/chapter3_aircraft_whole.tex}
+\draw[red,fill=red] (410,372) circle (60pt);
+\node[text width=3cm] at (180,110) {\contour{white} {$\Omega_{_1}$}};
+\node[text width=3cm] at (280,210) {\contour{white} {$\Omega_{_2}$}};
+\node[text width=3cm] at (180,280) {\contour{white} {$\Omega_{_3}$}};
+\node[text width=3cm] at (490,200) {\contour{white} {$\Omega_{_4}$}};
+\node[text width=3cm] at (380,310) {\contour{white} {$\Omega_{_5}$}};
+\node[text width=2cm] at (320,380) {\contour{white}{$\Omega_{_{6,1}}$}};
+\node[text width=2cm] at (380,460) {\contour{white}{$\Omega_{_{6,2}}$}};
+\end{scope}
+
+\begin{scope}
+\draw [very thick,gray] (358,378)
+	..controls (356,378) and (357,378)..(362,378)
+	..controls (395,380) ..(454,383)
+	..controls (456,384) and (455,383)..(452,380)
+	..controls (448,377) and (446,375)..(443,375) -- (436,373) -- (345,356);
+\draw [very thin,gray] (358,378) -- (345,356);
+\draw [very thin,gray] (390,380) -- (380,363);
+\draw [very thin,gray] (422,381) -- (415,369);
+\draw [very thin,gray] (352,368) -- (450,379);
+\draw[red,fill=red] (410,372) circle (20pt);
+\end{scope}
+
+\begin{scope}
+\node[text width=2cm] at (455,330) {\contour{white}{\scriptsize $\Omega_{_{6,3,1}}$}};
+\node[text width=2cm] at (500,345) {\contour{white}{\scriptsize $\Omega_{_{6,3,3}}$}};
+\node[text width=2cm] at (500,345) {\textpdfrender{TextRenderingMode=FillStroke, FillColor=red, StrokeColor=red,  LineWidth=.5pt}{\scriptsize $\Omega_{_{6,3,3}}$}};
+\node[text width=2cm] at (545,360) {\contour{white}{\scriptsize $\Omega_{_{6,3,5}}$}};
+
+\node[text width=2cm] at (465,400) {\contour{white}{\scriptsize $\Omega_{_{6,3,2}}$}};
+\node[text width=2cm] at (510,415) {\contour{white}{\scriptsize $\Omega_{_{6,3,4}}$}};
+\node[text width=2cm] at (555,430) {\contour{white}{\scriptsize $\Omega_{_{6,3,6}}$}};
+\end{scope}
+
+\end{tikzpicture}

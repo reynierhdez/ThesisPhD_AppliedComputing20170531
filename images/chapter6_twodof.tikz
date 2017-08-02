@@ -1,0 +1,33 @@
+\begin{tikzpicture}
+\tikzstyle{spring}=[thick,decorate,decoration={zigzag,pre length=0.1cm,post length=0.1cm,segment length=4}]
+ 
+\tikzstyle{damper}=[thick,decoration={markings,  
+  mark connection node=dmp,
+  mark=at position 0.5 with 
+  {
+    \node (dmp) [thick,inner sep=0pt,transform shape,rotate=-90,minimum width=10pt,minimum height=3pt,draw=none] {};
+    \draw [thick] ($(dmp.north east)+(1pt,1pt)$) -- ($(dmp.south east)+(0pt,1pt)$) -- ($(dmp.south west)+(0pt,-1pt)$) -- ($(dmp.north west)+(1pt,-1pt)$);
+    \draw [thick] ($(dmp.north)+(0,-3pt)$) -- ($(dmp.north)+(0,3pt)$);
+  }
+}, decorate]
+ 
+\tikzstyle{ground}=[fill,pattern=north east lines,draw=none,minimum width=0.7cm,minimum height=0.3cm]
+
+\begin{scope}
+
+\node[draw,outer sep=0pt,thick] (M1) [minimum width=0.7cm, minimum height=1.2cm] {$m_1$};
+\node[draw,outer sep=0pt,thick] (M2) at (1.5,0) [minimum width=0.7cm, minimum height=1.2cm] {$m_2$};
+
+\node (wall) [ground, rotate=-90, minimum width=1.8cm,yshift=-1.2cm] {};
+
+\draw[-latex] ($(wall.east) - (0,.25)$) -- ($(wall.east) - (0,1)$) node [midway, right] {$x$};
+\draw[-latex] ($(M2.east) + (.25,0)$) -- ($(M2.east) + (1,0)$) node [midway, above] {$y$};
+
+\draw (wall.north east) -- (wall.north west);
+
+\draw [spring] (wall.100) -- ($(M1.north west)!(wall.100)!(M1.south west)$) node [midway, above] {$k_1$};
+\draw [spring] ($(M1.north east)!(wall.100)!(M1.south east)$) -- ($(M2.north west)!(wall.100)!(M2.south west)$) node [midway, above] {$k_2$};
+\draw[thick, dashed, gray] ($(M2.north west)$) -- ($(M2.north west) + (0,1)$);
+\draw[thick, -latex, gray] ($(M2.north west) + (0,0.75)$) -- ($(M2.north west) + (0.75,0.75)$) node [midway, above] {$F$};                         
+\end{scope}
+\end{tikzpicture}

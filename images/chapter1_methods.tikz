@@ -1,0 +1,78 @@
+\usetikzlibrary{shadows,arrows.meta}
+
+\begin{tikzpicture}
+
+\node[anchor=south west,inner sep=0pt] (image) at (0,0){
+\begin{forest} baseline, for tree={
+    draw,
+    align=center,
+    calign=center,
+    parent anchor=south,
+    child anchor=north,
+    drop shadow,
+    base=center,
+    l+=20mm,
+    s sep=2mm,
+    inner sep=2mm,
+    where level=0{font=\bf, fill=white}{},
+    where level=1{font=\bf, fill=white}{},
+    where level=2{font=\bf, fill=white}{},
+    where level=3{font=\bf, fill=white}{},
+    where level=4{font=\bf, fill=white}{},
+    where level=5{font=\bf, fill=white}{},
+    %edge path={\noexpand\path[\forestoption{edge}] (\forestOve{\forestove{@parent}}{name}.parent anchor) -- +(0,-20pt)-| (\forestove{name}.child anchor)\forestoption{edge label};}
+}
+[{\textbf{Non-Destructive Testing (NDT) and Structural Health Monitoring (SHM) techniques}}
+    [{\textbf{Optical}}
+        %[{Visual\\inspection}]
+        %[Shearography]
+    ]
+    [{\textbf{Dynamics}} 
+        [{Electro-\\Mechanical\\Impedance}]
+        [{Ultrasonic\\Testing}]
+        [{Acousto-\\ultrasonic}]
+        [{Acoustic\\emision\\techniques}]
+        [{Structural\\vibrations\\techniques}, draw={black, ultra thick}
+            [{Time domain}
+                [{Time response \\ waveform}]
+                [{Statistical time\\series analysis}
+                    [{Correlation\\functions}]
+                    [{Auto-regressive\\models}]
+                ]
+                [{Time-frequency\\analysis}
+                    [{Wavelet\\transform}]
+                    [{Hilbert-Huang\\transform}]
+                ]
+            ]
+            [{Frequency domain}
+                [{Frequency\\response\\functions}
+                    [{Frequency\\assurance\\criterion}]
+                    [{Frequency\\response function\\damage index}] 
+                ]
+                [{Transmissibility\\functions}]
+                [{Higher\\harmonics}]
+            ]
+            [{Modal domain}    
+                [{Natural\\frequencies}]
+                [{Mode\\shapes}]
+                [{Mode shapes\\curvature}
+                    [{Mode shape\\curvature\\squared method}]
+                    [{Gapped\\smoothing\\method}]
+                    [{Modal strain\\energy\\damage index}]
+                    [{Curvature\\damage factor\\method}]
+                ]
+            ]
+        ]
+    ]
+    [{\textbf{Electric, magnetic and electromagnetic}}
+        %[{Electrical\\conductivity\\testing}]
+        %[{Magnetic\\particle\\testing}]
+        %[{Eddy\\Current\\Testing}]
+        %[{Radiography\\(X-ray)}]
+        %[{Infrared\\thermography}]
+    ]
+]
+\end{forest}
+};
+
+\end{tikzpicture}

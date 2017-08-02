@@ -1,0 +1,41 @@
+\begin{tikzpicture}
+\tikzstyle{ground}=[fill,pattern=south west lines,draw=none,minimum width=0.75cm,minimum height=0.3cm]
+\begin{scope}[node distance=1.25cm]
+\node[draw,outer sep=0pt] (B1) [minimum width=1.25cm, minimum height=0.25cm]{1};
+\node[draw,outer sep=0pt] (B2) [right of=B1, minimum width=1.25cm, minimum height=0.25cm]{2};
+\node[draw,outer sep=0pt] (B3) [right of=B2, minimum width=1.25cm, minimum height=0.25cm]{3};
+\node[draw,outer sep=0pt] (B4) [right of=B3, minimum width=1.25cm, minimum height=0.25cm]{4};
+\node[draw,outer sep=0pt] (B5) [right of=B4, minimum width=1.25cm, minimum height=0.25cm]{5};
+\node[draw,outer sep=0pt] (B6) [right of=B5, minimum width=1.25cm, minimum height=0.25cm]{6};
+\node[draw,outer sep=0pt] (B7) [right of=B6, minimum width=1.25cm, minimum height=0.25cm]{7};
+\node[draw,outer sep=0pt] (B8) [right of=B7, minimum width=1.25cm, minimum height=0.25cm]{8};
+\node[draw,outer sep=0pt] (B9) [right of=B8, minimum width=1.25cm, minimum height=0.25cm]{9};
+\node[draw,outer sep=0pt] (B10) [right of=B9, minimum width=1.25cm, minimum height=0.25cm]{10};
+\node[draw,outer sep=0pt] (BA) [right of=B10, xshift=1.2cm, minimum width=1cm, minimum height=0.5cm]{};
+\draw [-,line width=0.01mm] ($(BA.south west)-(0,0.1)$) -- ($(BA.south west)-(0,0.8)$);
+\draw [-,line width=0.01mm] ($(BA.south east)-(0,0.1)$) -- ($(BA.south east)-(0,0.8)$);
+
+\draw [-,line width=0.01mm] ($(BA.north east)+(0.1,0)$) -- ($(BA.north east)+(0.5,0)$);
+\draw [-,line width=0.01mm] ($(BA.south east)+(0.1,0)$) -- ($(BA.south east)+(0.5,0)$);
+
+\draw [latex-latex] ($(BA.south west)-(0,0.8)$) -- ($(BA.south east)-(0,0.8)$) node[midway,above] {$b$};
+
+\draw [latex-latex] ($(BA.north east)+(0.5,0)$) -- ($(BA.south east)+(0.5,0)$) node[midway,left] {$h$};
+\node (wall2) [ground, rotate=-90, minimum width=1.5cm, yshift=0.47cm, below of=B1] {};
+\draw (wall2.north east) -- (wall2.north west);
+\fill (0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$1$};
+\fill (1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$2$};
+\fill (2*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$3$};
+\fill (3*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$4$};
+\fill (4*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$5$};
+\fill (5*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$6$};
+\fill (6*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$7$};
+\fill (7*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$8$};
+\fill (8*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$9$};
+\fill (9*1.25+0.625,0) circle [radius=2pt] node[below,yshift=-0.3cm,font=\scriptsize] {$10$};
+\draw [latex-, thick , gray] (9*1.25+0.625,0.2) -- +(0,1cm) node [midway, right] {$F$};
+\draw [-,line width=0.01mm] (-0.625,-0.80) -- (-0.625,-1.20);
+\draw [-,line width=0.01mm] (9*1.25+0.625,-0.80) -- (9*1.25+0.625,-1.20);
+\draw [latex-latex] (-0.625,-1.20) -- (9*1.25+0.625,-1.20) node[midway,above] {$l$};
+\end{scope}
+\end{tikzpicture}

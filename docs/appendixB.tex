@@ -1,0 +1,125 @@
+\chapter{Features and classification approaches for vibration-based damage identification}
+\label{app:A}
+
+{
+\scriptsize
+\centering
+\renewcommand{\arraystretch}{0.9}
+\begin{longtable}{L{8.2cm}L{5.8cm}}
+\caption{Literature overview of features and classification approaches for vibration-based damage identification. Adapted from \cite{Ooijevaar2014,de2016shm}}
+\label{tab:alldomains}
+\endfirsthead
+\multicolumn{2}{c}%
+{\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
+\toprule
+\endhead
+\midrule \multicolumn{2}{r}{\textit{Continued on next page}} \\
+\endfoot
+\midrule
+\endlastfoot
+\toprule\toprule
+\multicolumn{2}{c}{\textbf{Time domain}}\\
+\midrule\midrule
+\multicolumn{2}{l}{\textbf{Time response / waveform}}\\
+\midrule
+\multicolumn{2}{l}{\textbf{Statistical time series analysis}}\\
+Correlation functions (COR) & \cite{Fassois2007}\\
+Autoregressive models (AR) & \cite{Sohn2001} \newline \cite{Fassois2007}\\
+Auto-Regressive Moving Average (ARMA) & \cite{Silva2008}\\
+Vector-dependent functionally pooled (VFP) & \cite{kopsaftopoulos2006identification} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Time-frequency analysis}}\\
+Wavelet transform based methods (WA) & \cite{Taha2006} \newline \cite{Smith2007}\newline \cite{Rucka2011}\newline \cite{Mahdavi2013} \newline \cite{Montanari2015233}\\
+Hilbert(-Huang) transform based methods (HT/HHT) & \cite{huang1998empirical} \newline \cite{Chen2014} \\
+Empirical mode decomposition (EMD) & \cite{huang1998empirical} \\
+Conjugate-pair decomposition (CPD) & \cite{pai2011time} \\
+\midrule\midrule
+\multicolumn{2}{c}{\textbf{Frequency domain}}\\
+\midrule\midrule
+\multicolumn{2}{l}{\textbf{Fourier / power spectra}}\\
+Fourier coefficients (FC) & \cite{Morassi2007}\\
+\midrule
+\multicolumn{2}{l}{\textbf{Frequency response function / operational deflection shapes}}\\
+Frequency response function change (FRFCH) & \cite{Kessler2002} \newline \cite{Sulaiman2017}\\
+Frequency response function damage index (FRFDI) & \cite{Banerjee2009} \\
+Frequency response function shape method (FRFSHP) & \cite{Liu2009} \\
+Detection and relative damage quantification indicator (DRQ) & \cite{Sampaio2009} \\
+Frequency response assurance criterion (FRAC) & \cite{Nefske1996} \\
+Coordinate orthogonality check (CORTHOG) & \cite{avitabile1994coordinate} \\
+Complex correlation coefficient (CCF) & \cite{van1999linking} \\
+Modal FRF assurance criterion (MFAC) & \cite{fotsch2001further} \\
+Frequency domain assurance criterion (FDAC) & \cite{pascual1997frequency} \\
+Response vector assurance criterion (RVAC) & \cite{sampaio2003frequency} \\
+Operational deflection shape change (ODSC) & \cite{Pascual1999} \\
+Global shape correlation (GSC) & \cite{Zang2007} \\
+Global amplitude correlation (GAC) & \cite{Zang2007} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Frequency response function curvature}}\\
+Frequency response curvature (FRFC) & \cite{Sampaio1999} \\
+Strain frequency response damage index (SFRFDI) & \cite{Maia2003} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Mechanical impedance (Z)}}\\
+Root mean square deviation (RMSD) & \cite{Park2003} \\
+Mean absolute percentage deviation (MAPD) & \cite{Giurgiutiu2005} \\
+Correlation coefficient deviation (CCD) & \cite{Giurgiutiu2005} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Transmissibility function (T)}}\\
+Transmissibility damage index (TDI) & \cite{Johnson2002} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Antiresonances}}\\
+Antiresonance shift (AFN) & \cite{wahl1999significance} \newline \cite{Dilena2004} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Higher harmonics (nonlinear effect)}}\\
+Higher harmonic imaging (HH) & \cite{Krohn2002} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Modulations (nonlinear effect)}}\\
+Vibro-acoustic modulations (VAM) & \cite{Donskoy1998} \\
+\midrule\midrule
+\multicolumn{2}{c}{\textbf{Modal domain}}\\
+\midrule\midrule
+\multicolumn{2}{l}{\textbf{Natural frequencies}}\\
+Cawley-Adams criteria (CAC) & \cite{Cawley1979} \\
+Damage location assurance criteria (DLAC) & \cite{Messina1998} \\
+Multiple damage location assurance criteria (MDLAC) & \cite{Messina1998} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Mode shape}}\\
+Mode shape rotation change (MSRC) & \cite{Abdo2002} \\
+Mode shape amplitude change (MS) & \cite{Maia2003} \\
+Squared mode shape slope change (MSS) & \cite{Maia2003} \\
+Modal assurance criteria (MAC) & \cite{Parloo2003} \\
+Inverse modal assurance criteria (IMAC) & \cite{Allemang2003} \\
+Co-ordinate modal assurance criteria (COMAC) & \cite{Parloo2003} \\
+Relative mode shape change (RMS) & \cite{Khoo2004} \\
+Fractal dimension method (FD) & \cite{Hadjileontiadis2005} \\
+Generalized fractal dimension (GFD) & \cite{Wang2007} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Mode shape curvature}}\\
+Mode shape curvature method (MSC) & \cite{Pandey1991} \newline \cite{Chandrashekhar2009}\\
+Modal strain energy damage index method (MSEDI) & \cite{Stubbs1995} \newline \cite{Seyedpoor2012}\\
+Gapped smoothing method (GSM) & \cite{Ratcliffe1997} \\
+Modal strain energy change ratio (MSECR) & \cite{Shi1998} \\
+Curvature damage factor method (CDF) & \cite{Wahab1999} \\
+Mode shape curvature squared method (MSC) & \cite{Maia2003} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Modal damping}}\\
+Specific damping capacity (SDC) & \cite{Guild1981} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Dynamic stiffness (combination of modal parameters)}}\\
+Effective stiffness change (ESC) & \cite{Khoo2004} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Dynamic flexibility (combination of modal parameters)}}\\
+Modal flexibility method (MFL) & \cite{Pandey1994} \\
+Uniform load surface method (ULS) & \cite{Zhang1998} \\
+Modal flexibility curvature method (MFLC) & \cite{Lu2002} \\
+Uniform load surface curvature (ULSC) & \cite{Wu2004} \\
+Modal compliance index method (MCI) & \cite{Choi2005} \\
+\midrule
+\multicolumn{2}{l}{\textbf{Updating methods}}\\
+Modal flexibility residual (MFR) &\cite{Jaishi2006}\\
+\midrule
+\multicolumn{2}{l}{\textbf{Other methods}}\\
+Modal peak density (MD) & \cite{Chrysochoidis2004} \\
+Modal filters (MF) & \cite{Deraemaeker2006} \\
+\bottomrule
+\end{longtable}
+}

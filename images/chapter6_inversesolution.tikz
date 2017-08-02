@@ -1,0 +1,38 @@
+\begin{tikzpicture}
+\tikzset{force/.style={-latex,ultra thick}}
+\draw [fill=white] (1.5,-3.5) rectangle (5,3.5);
+\filldraw[fill=lightgray!50,rounded corners] (2,-3) -- (2,1) -- (4,3) -- (4,-1) -- cycle;
+\draw[-latex] (4,-3) -- (4,-2.5)node[anchor=south] {\footnotesize $y$};
+\draw[-latex] (4,-3) -- (4.25,-2.75)node[anchor=south west] {\footnotesize $x$};
+\draw[-latex] (4,-3) -- (4.5,-3)node[anchor=west] {\footnotesize $z$};
+\fill (2.25,0.75) circle[radius=2pt] node[anchor=south] {} node[anchor=south] {\scriptsize $u_{_1}$};
+\fill (3,1.5) circle[radius=2pt] node[anchor=south] {} node[anchor=south] {\scriptsize $u_{_2}$};
+\fill (3.75,2.25) circle[radius=2pt] node[anchor=south] {} node[anchor=south] {\scriptsize $u_{_3}$};
+\fill (2.25,-0.75) circle[radius=2pt] node[anchor=south] {} node[anchor=south] {\scriptsize $u_{_4}$};
+\fill (3,0) circle[radius=2pt] node[anchor=center, text width = 2.5cm, align=center] {}node[anchor=south] {\scriptsize $u_{_5}$};
+\fill (3.75,0.75) circle[radius=2pt] node[anchor=south] {} node[anchor=south] {\scriptsize $u_{_6}$};
+\fill (2.25,-2.25) circle[radius=2pt] node[anchor=south] {}node[anchor=south] {\scriptsize $u_{_7}$};
+\fill (3,-1.5) circle[radius=2pt] node[anchor=south] {} node[anchor=south] {\scriptsize $u_{_8}$};
+\fill (3.75,-0.75) circle[radius=2pt] node[anchor=south] {}node[anchor=south] {\scriptsize $u_{_n}$};
+\path (2,1) -- node[anchor=south,sloped,xslant=.2, font=\footnotesize] {Structure} (4,3);
+\draw ((4.15,0.75) node[anchor=west, font=\footnotesize] {$\Theta^{ e}$};
+\draw[-latex,thick, gray] (2.25,0.75) -- (3.15,0.75) node[anchor=south] {\footnotesize $F_1$};
+\draw[-latex,thick, gray] (2.25,-2.25) -- (3.15,-2.25) node[anchor=south] {\footnotesize $F_2$};
+\draw[-latex,thick, gray] (3.75,2.25) -- (4.65,2.25) node[anchor=south] {\footnotesize $F_3$};
+\draw[-latex,thick, gray] (3.75,-0.75) -- (4.65,-0.75) node[anchor=south] {\footnotesize $F_n$};
+\coordinate (str) at (5,0);
+\node[draw, align=center, rectangle, right of=str, text width = 2.5cm, node distance=3cm] (residual) {{\footnotesize Objective Function}};
+\node[draw, align=center, rectangle, above of=residual, text width = 3cm, node distance=2.5cm] (outnastran) {\small Read NASTRAN punch file};
+\node[draw, align=center, rectangle, above of=outnastran, text width = 3cm, node distance=1.5cm] (data) {\small NASTRAN};
+\node[draw, align=center, rectangle, right of=residual, text width = 2.5cm, node distance=4.0cm] (algorithm) {\small Hybrid \\ algorithm};
+\node[draw, align=center, rectangle, above of=algorithm, text width = 3cm, node distance=2.5cm] (innastran) {\small Write in NASTRAN input file};
+\node[align=center, below of=algorithm, text width = 2cm, node distance=2cm] (damage) {\small Damages $\tilde{\Theta}^{\rm d}$};
+\coordinate (A) at (data -| algorithm);
+\draw [-latex'] (str) -- (residual) node [midway, above] {\footnotesize $u^{{obs}}(t)$};
+\draw [-latex'] (residual) -- (algorithm) node [midway, above] {\footnotesize $J({\Theta^{\rm d}})$};
+\draw [-latex'] (innastran.north) -- (A) -- (data.east);
+\path [draw, -latex'] (data) -- (outnastran);
+\path [draw, -latex'] (algorithm) -- (innastran) node [midway, right] {\footnotesize $\Theta^{\rm d}$};
+\path [draw, -latex'] (outnastran) -- node [right] {\footnotesize $u^{{mod}}(\Theta^{\rm d}, t)$}(residual);
+\draw [-latex'] (algorithm.south) -- (damage.north) node [midway, below, text width = 2.5cm] {\footnotesize };
+\end{tikzpicture}

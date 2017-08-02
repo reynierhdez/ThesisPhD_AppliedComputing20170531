@@ -1,0 +1,11 @@
+\begin{tikzpicture}[framed]
+    
+    \node[draw] (ini) at (0,0) {NASTRAN statement};
+    \node[draw, below=0.25cm of ini] (fms) {File Management statement (FMS)};
+    \node[draw, below=0.25cm of fms] (ecs) {\textbf{Executive Control statement}};
+    \node[below=0.25cm of ecs] (cend) {\texttt{CEND}};
+    \node[draw, below= 0.25cm of cend] (ccc) {\textbf{Case Control command}};
+    \node[below=0.25cm of ccc] (bulk) {\texttt{BEGIN BULK}};
+    \node[draw, below=0.25cm of bulk] (bde) {\textbf{Bulk Data entry}};
+    \node[below=0.25cm of bde] (end) {\texttt{ENDDATA}};
+\end{tikzpicture}

@@ -1,0 +1,74 @@
+\documentclass[PublicacaoDissOuTese,portuguese,english,LogoINPE,CCBYNC]{tdiinpe}
+
+\input{docs/toinclude.tex}
+
+%\watermark{Revisão No. ##}
+
+\usepackage{rotating}
+\usepackage{dsfont}
+\usepackage{comment}
+
+\input{docs/configuracao}
+\makeindex
+
+\begin{document}
+
+%\marcaRegistrada{}	% comando opcional usado para informar abaixo da ficha catalográfica sobre marca registrada
+
+\maketitle
+
+\include{docs/epigrafe} %% Opcional
+\include{docs/dedica} %% Opcional
+% \include{/docs/agradecimentos} %% Opcional
+\include{docs/abstract} %% obrigatório
+
+\cleardoublepage
+\phantomsection
+\pdfbookmark[0]{\listfigurename}{listfigurename}
+\includeListaFiguras
+
+\phantomsection
+\pdfbookmark[0]{\listtablename}{listtablename}
+\includeListaTabelas
+
+\phantomsection
+\pdfbookmark[0]{LIST OF ALGORITHMS}{listalgorithmname}
+\includeListaAlgoritmos
+
+\phantomsection
+\pdfbookmark[0]{\nomeabreviaturasesiglas}{nomeabreviaturasesiglas}
+\include{docs/abreviaturasesiglas}
+
+\phantomsection
+\pdfbookmark[0]{\listsimbname}{listsimbname}
+\include{docs/simbolos}
+
+\includeSumario.
+\inicioIntroducao
+
+\include{docs/chapter1}
+%\include{docs/chapter2}
+\include{docs/chapter3}
+\include{docs/chapter3.1}
+\include{docs/chapter3.2}
+\include{docs/chapter4}
+\include{docs/chapter5}
+\include{docs/chapter6}
+% \include{docs/chapter7}
+\include{docs/chapter8}
+
+\bibliography{bib/library}
+
+%\include{./docs/glossario} %% insira os termos do glossário no arquivo glossario.tex %% opcional
+
+\inicioApendice
+\include{docs/appendixB}
+
+% \inicioAnexo
+% \include{docs/appendixA}
+
+\include{docs/vita}
+
+\inicioIndice
+\include{docs/contracapa}
+\end{document}
